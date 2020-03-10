@@ -10,6 +10,7 @@ data_latest$label <- lapply(data_latest$label, HTML)
 
 map <- leaflet(data_latest) %>%
   setMaxBounds(-90, -180, 90, 180) %>%
+  setView(0, 0, zoom = 2) %>%
   addTiles() %>%
   addCircleMarkers(
     lng          = ~Long,
