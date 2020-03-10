@@ -37,3 +37,7 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# IntelliJ stuff
+.idea
+covid19_dashboard.iml
