@@ -7,7 +7,8 @@ ui <- dashboardPage(
   dashboardBody(
     tags$head(
       tags$style(type = "text/css", "#overview_map {height: calc(100vh - 120px) !important;}"),
-      tags$style(HTML(".col-sm-12 { padding: 5px;}"))
+      tags$style(HTML(".col-sm-12 { padding: 5px; }")),
+      tags$style(HTML("::-webkit-scrollbar { display: none; }"))
     ),
     fluidRow(
       column(
