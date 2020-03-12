@@ -1,31 +1,48 @@
-createSummaryTable <- function(data, column, title, icon, selectable = FALSE) {
-  valueBox_summary <- valueBox(
-    width    = 12,
-    format(sum(data[[column]]), big.mark = " "),
-    subtitle = title,
-    icon     = icon,
-    color    = "light-blue"
-  )
+summariseData <- function(df, variable, groupBy) {
+  name_var <- capFirst(variable)
 
-  datatable_summary <- datatable(
-    as.data.frame(data),
+  df %>%
+    group_by(!!sym(groupBy)) %>%
+    summarise(!!name_var := sum(!!sym(variable))) %>%
+    arrange(!!-sym(name_var))
+}
+
+getSummaryDT <- function(data, variable, groupBy, selectable = FALSE) {
+  summaryDT <- datatable(
+    na.omit(as.data.frame(summariseData(data, variable, groupBy))),
     rownames  = FALSE,
     options   = list(
-      scrollY        = "calc(100vh - 300px)",
+      scrollY        = "calc(100vh - 360px)",
       scrollCollapse = T,
       dom            = 't',
       paging         = FALSE
     ),
     selection = ifelse(selectable, "single", "none")
   )
+}
+
+createSummaryTable <- function(data, variable, title, icon, selectable = FALSE) {
+  valueBox_summary <- valueBox(
+    width    = 12,
+    format(sum(data[[2]]), big.mark = " "),
+    subtitle = title,
+    icon     = icon,
+    color    = "light-blue"
+  )
+
+  summaryTables <- tabBox(
+    tabPanel("Country/Region", renderDataTable(getSummaryDT(data_latest, variable, "Country/Region"))),
+    tabPanel("Province/State", renderDataTable(getSummaryDT(data_latest, variable, "Province/State"))),
+    width = 12
+  )
 
   return(
     renderUI({
       box(
         valueBox_summary,
-        renderDataTable(datatable_summary),
+        summaryTables,
         width  = 12,
-        height = "calc(100vh - 106px)"
+        height = "calc(100vh - 100px)"
       )
     })
   )
@@ -38,7 +55,7 @@ summary_confirmed <- data_latest %>%
 
 output$box_confirmed <- createSummaryTable(
   summary_confirmed,
-  "Confirmed",
+  "confirmed",
   "Total Confirmed",
   icon("file-medical")
 )
@@ -50,7 +67,7 @@ summary_death <- data_latest %>%
 
 output$box_deaths <- createSummaryTable(
   summary_death,
-  "Deaths",
+  "death",
   "Total Deaths",
   icon("heartbeat")
 )
@@ -62,7 +79,7 @@ summary_recovered <- data_latest %>%
 
 output$box_recovered <- createSummaryTable(
   summary_recovered,
-  "Recovered",
+  "recovered",
   "Total Recovered",
   icon("heartbeat")
 )

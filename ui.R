@@ -6,32 +6,32 @@ ui <- dashboardPage(
   dashboardSidebar(disable = TRUE),
   dashboardBody(
     tags$head(
-      tags$style(type = "text/css", "#overview_map {height: calc(100vh - 170px) !important;}")
+      tags$style(type = "text/css", "#overview_map {height: calc(100vh - 120px) !important;}"),
+      tags$style(HTML(".col-sm-12 { padding: 5px;}"))
     ),
     fluidRow(
       column(
         uiOutput("box_confirmed"),
         width = 2,
-        style = "padding-left: 0px; padding-right: 0px"
+        style = 'padding:0px;'
       ),
       column(
         box(
-          title = "Overview Map",
           width = 12,
           leafletOutput("overview_map")
         ),
         width = 6,
-        style = "padding-left: 0px; padding-right: 0px"
+        style = 'padding:0px;'
       ),
       column(
         uiOutput("box_deaths"),
         width = 2,
-        style = "padding-left: 0px; padding-right: 0px"
+        style = 'padding:0px;'
       ),
       column(
         uiOutput("box_recovered"),
         width = 2,
-        style = "padding-left: 0px; padding-right: 0px"
+        style = 'padding:0px;'
       )
     )
   )

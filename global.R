@@ -7,6 +7,8 @@ library("plotly")
 library("DT")
 library("fs")
 
+source("utils.R", local = T)
+
 updateData <- function() {
   # Download data from Johns Hopkins (https://github.com/CSSEGISandData/COVID-19) if the data is older than 0.5h
   if (as.double(Sys.time() - file_info("data/covid19_data.zip")$change_time, units = "hours") > 0.5) {
