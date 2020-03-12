@@ -7,23 +7,27 @@ library("plotly")
 library("DT")
 library("fs")
 
-# Download data from Johns Hopkins (https://github.com/CSSEGISandData/COVID-19) if the data is older than 1h
-if (as.double(Sys.time() - file_info("data/covid19_data.zip")$change_time, units = "hours") > 1) {
-  file_delete("data/covid19_data.zip")
+updateData <- function() {
+  # Download data from Johns Hopkins (https://github.com/CSSEGISandData/COVID-19) if the data is older than 0.5h
+  if (as.double(Sys.time() - file_info("data/covid19_data.zip")$change_time, units = "hours") > 0.5) {
+    file_delete("data/covid19_data.zip")
 
-  download.file(
-    url      = "https://github.com/CSSEGISandData/COVID-19/archive/master.zip",
-    destfile = "data/covid19_data.zip"
-  )
+    download.file(
+      url      = "https://github.com/CSSEGISandData/COVID-19/archive/master.zip",
+      destfile = "data/covid19_data.zip"
+    )
 
-  data_path <- "COVID-19-master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-"
-  unzip(
-    zipfile   = "data/covid19_data.zip",
-    files     = paste0(data_path, c("Confirmed.csv", "Deaths.csv", "Recovered.csv")),
-    exdir     = "data",
-    junkpaths = T
-  )
+    data_path <- "COVID-19-master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-"
+    unzip(
+      zipfile   = "data/covid19_data.zip",
+      files     = paste0(data_path, c("Confirmed.csv", "Deaths.csv", "Recovered.csv")),
+      exdir     = "data",
+      junkpaths = T
+    )
+  }
 }
+# Update with start of app
+updateData()
 
 # TODO: Still throws a warning but works for now
 data_confirmed <- read_csv("data/time_series_19-covid-Confirmed.csv")
