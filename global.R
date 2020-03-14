@@ -37,6 +37,8 @@ data_death     <- read_csv("data/time_series_19-covid-Deaths.csv")
 data_recovered <- read_csv("data/time_series_19-covid-Recovered.csv")
 
 # Get latest data
+current_date                 <- as.Date(names(data_confirmed)[ncol(data_confirmed)], format = "%m/%d/%y")
+changed_date                 <- file_info("data/covid19_data.zip")$change_time
 data_confirmed_latest        <- data_confirmed[, c(1:4, ncol(data_confirmed))]
 names(data_confirmed_latest) <- c(names(data_confirmed_latest)[1:4], "confirmed")
 data_death_latest            <- data_death[, c(1:4, ncol(data_death))]

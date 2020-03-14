@@ -1,6 +1,6 @@
 body_overview <- dashboardBody(
   tags$head(
-    tags$style(type = "text/css", "#overview_map {height: calc(100vh - 120px) !important;}"),
+    tags$style(type = "text/css", "#overview_map {height: 65vh !important;}"),
     tags$style(type = "text/css", ".container-fluid {padding-left: 0px; padding-right: 0px !important;}"),
     tags$style(type = "text/css", ".navbar {margin-bottom: 0px;}"),
     tags$style(type = "text/css", ".content {padding: 0px;}"),
@@ -10,29 +10,19 @@ body_overview <- dashboardBody(
   ),
   fluidRow(
     fluidRow(
-      uiOutput("kpiBox")
-    ),
-    column(
-      uiOutput("box_confirmed"),
-      width = 2,
-      style = 'padding:0px;'
+      uiOutput("box_keyFigures")
     ),
     column(
       box(
         width = 12,
         leafletOutput("overview_map")
       ),
-      width = 6,
+      width = 8,
       style = 'padding:0px;'
     ),
     column(
-      uiOutput("box_deaths"),
-      width = 2,
-      style = 'padding:0px;'
-    ),
-    column(
-      uiOutput("box_recovered"),
-      width = 2,
+      uiOutput("summaryTable"),
+      width = 4,
       style = 'padding:0px;'
     )
   )
