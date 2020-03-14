@@ -41,8 +41,7 @@ createSummaryTable <- function(data, variable, title, icon, selectable = FALSE) 
       box(
         valueBox_summary,
         summaryTables,
-        width  = 12,
-        height = "calc(100vh - 100px)"
+        width = 12
       )
     })
   )
