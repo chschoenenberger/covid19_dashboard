@@ -1,41 +1,54 @@
-valueBox_confirmed <- column(
+valueBox_confirmed <- renderUI({
+  data <- data_atDate(input$timeSlider)
+  column(
+    valueBox(
+      format(sum(data$confirmed), big.mark = " "),
+      subtitle = "Confirmed",
+      icon     = icon("file-medical"),
+      color    = "light-blue",
+      width    = NULL
+    ),
+    width = 3,
+    style = "padding-left: 0px"
+  )
+})
+
+
+valueBox_recovered <- renderUI({
+  data <- data_atDate(input$timeSlider)
   valueBox(
-    format(sum(data_latest$confirmed), big.mark = " "),
-    subtitle = "Confirmed",
-    icon     = icon("file-medical"),
+    format(sum(data_latest$recovered), big.mark = " "),
+    subtitle = "Recovered",
+    icon     = icon("heart"),
     color    = "light-blue",
-    width    = NULL
-  ),
-  width = 3,
-  style = "padding-left: 0px"
-)
+    width    = 3
+  )
+})
 
-valueBox_recovered <- valueBox(
-  format(sum(data_latest$recovered), big.mark = " "),
-  subtitle = "Recovered",
-  icon     = icon("heart"),
-  color    = "light-blue",
-  width    = 3
-)
+valueBox_death <- renderUI({
+  data <- data_atDate(input$timeSlider)
+  valueBox(
+    format(sum(data_latest$death), big.mark = " "),
+    subtitle = "Death",
+    icon     = icon("heartbeat"),
+    color    = "light-blue",
+    width    = 3
+  )
+})
 
-valueBox_death <- valueBox(
-  format(sum(data_latest$death), big.mark = " "),
-  subtitle = "Death",
-  icon     = icon("heartbeat"),
-  color    = "light-blue",
-  width    = 3
-)
-
-valueBox_countries <- valueBox(
-  nrow(distinct(data_latest, `Country/Region`)),
-  subtitle = "Affected Countries",
-  icon     = icon("flag"),
-  color    = "light-blue",
-  width    = 3
-)
+valueBox_countries <- renderUI({
+  data <- data_atDate(input$timeSlider)
+  valueBox(
+    nrow(distinct(data_latest, `Country/Region`)),
+    subtitle = "Affected Countries",
+    icon     = icon("flag"),
+    color    = "light-blue",
+    width    = 3
+  )
+})
 
 output$box_keyFigures <- renderUI(box(
-  title = paste0("Key Figures (", strftime(current_date, format = "%d.%m.%Y"), ")"),
+  title = paste0("Key Figures (", strftime(input$timeSlider, format = "%d.%m.%Y"), ")"),
   fluidRow(
     valueBox_confirmed,
     valueBox_recovered,

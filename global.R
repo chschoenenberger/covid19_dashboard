@@ -39,36 +39,21 @@ data_recovered <- read_csv("data/time_series_19-covid-Recovered.csv")
 # Get latest data
 current_date                 <- as.Date(names(data_confirmed)[ncol(data_confirmed)], format = "%m/%d/%y")
 changed_date                 <- file_info("data/covid19_data.zip")$change_time
-data_confirmed_latest        <- data_confirmed[, c(1:4, ncol(data_confirmed))]
-names(data_confirmed_latest) <- c(names(data_confirmed_latest)[1:4], "confirmed")
-data_death_latest            <- data_death[, c(1:4, ncol(data_death))]
-names(data_death_latest)     <- c(names(data_death_latest)[1:4], "death")
-data_recovered_latest        <- data_recovered[, c(1:4, ncol(data_recovered))]
-names(data_recovered_latest) <- c(names(data_recovered_latest)[1:4], "recovered")
-
-# Join datasets
-data_latest <- data_confirmed_latest %>%
-  full_join(data_death_latest) %>%
-  full_join(data_recovered_latest)
-rm(data_confirmed_latest, data_death_latest, data_recovered_latest)
 
 # Get evolution data by country
 data_confirmed_sub <- data_confirmed %>%
-  select(-`Province/State`, -Lat, -Long) %>%
-  pivot_longer(names_to = "date", cols = -`Country/Region`) %>%
-  group_by(`Country/Region`, date) %>%
+  pivot_longer(names_to = "date", cols = 5:ncol(data_confirmed)) %>%
+  group_by(`Province/State`, `Country/Region`, date, Lat, Long) %>%
   summarise("confirmed" = sum(value))
 
 data_recovered_sub <- data_recovered %>%
-  select(-`Province/State`, -Lat, -Long) %>%
-  pivot_longer(names_to = "date", cols = -`Country/Region`) %>%
-  group_by(`Country/Region`, date) %>%
+  pivot_longer(names_to = "date", cols = 5:ncol(data_recovered)) %>%
+  group_by(`Province/State`, `Country/Region`, date, Lat, Long) %>%
   summarise("recovered" = sum(value))
 
 data_death_sub <- data_death %>%
-  select(-`Province/State`, -Lat, -Long) %>%
-  pivot_longer(names_to = "date", cols = -`Country/Region`) %>%
-  group_by(`Country/Region`, date) %>%
+  pivot_longer(names_to = "date", cols = 5:ncol(data_death)) %>%
+  group_by(`Province/State`, `Country/Region`, date, Lat, Long) %>%
   summarise("death" = sum(value))
 
 data_evolution      <- data_confirmed_sub %>%
@@ -76,5 +61,12 @@ data_evolution      <- data_confirmed_sub %>%
   full_join(data_death_sub) %>%
   pivot_longer(names_to = "var", cols = c(confirmed, recovered, death))
 data_evolution$date <- as.Date(data_evolution$date, "%m/%d/%y")
+
+data_atDate <- function(inputDate) {
+  data_evolution[which(data_evolution$date == inputDate),] %>%
+    pivot_wider(id_cols = 1:5, names_from = var, values_from = value)
+}
+
+data_latest <- data_atDate(max(data_evolution$date))
 
 rm(data_confirmed, data_confirmed_sub, data_recovered, data_recovered_sub, data_death, data_death_sub)

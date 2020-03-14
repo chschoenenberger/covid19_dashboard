@@ -1,10 +1,11 @@
-output$summaryTable <- renderUI(
+output$summaryTable <- renderUI({
+  data <- data_atDate(input$timeSlider)
   tabBox(
-    tabPanel("Country/Region", renderDataTable(getSummaryDT(data_latest, "Country/Region"))),
-    tabPanel("Province/State", renderDataTable(getSummaryDT(data_latest, "Province/State"))),
+    tabPanel("Country/Region", renderDataTable(getSummaryDT(data, "Country/Region"))),
+    tabPanel("Province/State", renderDataTable(getSummaryDT(data, "Province/State"))),
     width = 12
   )
-)
+})
 
 summariseData <- function(df, groupBy) {
   df %>%
@@ -22,7 +23,7 @@ getSummaryDT <- function(data, groupBy, selectable = FALSE) {
     rownames  = FALSE,
     options   = list(
       order          = list(1, "desc"),
-      scrollY        = "56vh",
+      scrollY        = "46vh",
       scrollCollapse = T,
       dom            = 't',
       paging         = FALSE

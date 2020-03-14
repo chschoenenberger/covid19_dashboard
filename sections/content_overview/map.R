@@ -1,21 +1,27 @@
 library("htmltools")
 
-data_latest$label <- paste0(
-  '<b>', ifelse(is.na(data_latest$`Province/State`), data_latest$`Country/Region`, data_latest$`Province/State`), '</b><br>
-  Confirmed: ', data_latest$confirmed, '<br>
-  Deaths: ', data_latest$death, '<br>
-  Recovered: ', data_latest$recovered
-)
-data_latest$label <- lapply(data_latest$label, HTML)
+addLabel <- function(data) {
+  data$label <- paste0(
+    '<b>', ifelse(is.na(data$`Province/State`), data$`Country/Region`, data$`Province/State`), '</b><br>
+  Confirmed: ', data$confirmed, '<br>
+  Deaths: ', data$death, '<br>
+  Recovered: ', data$recovered
+  )
+  data$label <- lapply(data$label, HTML)
 
-map <- leaflet(data_latest) %>%
+  return(data)
+}
+
+map <- leaflet(addLabel(data_latest)) %>%
   setMaxBounds(-180, -90, 180, 90) %>%
   setView(0, 0, zoom = 2) %>%
   addTiles()
 
 observe({
+  req(input$timeSlider)
   zoomLevel <- input$overview_map_zoom
-  leafletProxy("overview_map", data = data_latest) %>%
+  data      <- data_atDate(input$timeSlider) %>% addLabel()
+  leafletProxy("overview_map", data = data) %>%
     clearMarkers() %>%
     addCircleMarkers(
       lng          = ~Long,

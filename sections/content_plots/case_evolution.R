@@ -58,7 +58,7 @@ getDataByCountry <- function(countries) {
 
 output$case_evolution_byCountry <- renderPlotly({
   data <- getDataByCountry(input$caseEvolution_country)
-  browser()
+
   req(nrow(data$confirmed) > 0)
   p <- plot_ly(data = data$confirmed, x = ~date, y = ~value, color = ~`Country/Region`, type = 'scatter', mode = 'lines',
     legendgroup     = ~`Country/Region`) %>%
