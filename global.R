@@ -45,9 +45,36 @@ data_death_latest            <- data_death[, c(1:4, ncol(data_death))]
 names(data_death_latest)     <- c(names(data_death_latest)[1:4], "death")
 data_recovered_latest        <- data_recovered[, c(1:4, ncol(data_recovered))]
 names(data_recovered_latest) <- c(names(data_recovered_latest)[1:4], "recovered")
-rm(data_confirmed, data_death, data_recovered)
 
 # Join datasets
-data_latest <- full_join(data_confirmed_latest, data_death_latest)
-data_latest <- full_join(data_latest, data_recovered_latest)
+data_latest <- data_confirmed_latest %>%
+  full_join(data_death_latest) %>%
+  full_join(data_recovered_latest)
 rm(data_confirmed_latest, data_death_latest, data_recovered_latest)
+
+# Get evolution data by country
+data_confirmed_sub <- data_confirmed %>%
+  select(-`Province/State`, -Lat, -Long) %>%
+  pivot_longer(names_to = "date", cols = -`Country/Region`) %>%
+  group_by(`Country/Region`, date) %>%
+  summarise("confirmed" = sum(value))
+
+data_recovered_sub <- data_recovered %>%
+  select(-`Province/State`, -Lat, -Long) %>%
+  pivot_longer(names_to = "date", cols = -`Country/Region`) %>%
+  group_by(`Country/Region`, date) %>%
+  summarise("recovered" = sum(value))
+
+data_death_sub <- data_death %>%
+  select(-`Province/State`, -Lat, -Long) %>%
+  pivot_longer(names_to = "date", cols = -`Country/Region`) %>%
+  group_by(`Country/Region`, date) %>%
+  summarise("death" = sum(value))
+
+data_evolution      <- data_confirmed_sub %>%
+  full_join(data_recovered_sub) %>%
+  full_join(data_death_sub) %>%
+  pivot_longer(names_to = "var", cols = c(confirmed, recovered, death))
+data_evolution$date <- as.Date(data_evolution$date, "%m/%d/%y")
+
+rm(data_confirmed, data_confirmed_sub, data_recovered, data_recovered_sub, data_death, data_death_sub)

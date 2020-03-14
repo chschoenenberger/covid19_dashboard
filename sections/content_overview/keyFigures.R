@@ -42,6 +42,6 @@ output$box_keyFigures <- renderUI(box(
     valueBox_death,
     valueBox_countries
   ),
-  div("Last updated: ", strftime(changed_date, format = "%d.%m.%Y")),
+  div("Last updated: ", strftime(changed_date, format = "%d.%m.%Y - %R %Z")),
   width = 12
 ))
