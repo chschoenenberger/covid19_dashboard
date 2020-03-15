@@ -59,7 +59,8 @@ data_death_sub <- data_death %>%
 data_evolution      <- data_confirmed_sub %>%
   full_join(data_recovered_sub) %>%
   full_join(data_death_sub) %>%
-  pivot_longer(names_to = "var", cols = c(confirmed, recovered, death))
+  pivot_longer(names_to = "var", cols = c(confirmed, recovered, death)) %>%
+  ungroup()
 data_evolution$date <- as.Date(data_evolution$date, "%m/%d/%y")
 
 data_atDate <- function(inputDate) {

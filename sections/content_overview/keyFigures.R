@@ -17,7 +17,7 @@ valueBox_confirmed <- renderUI({
 valueBox_recovered <- renderUI({
   data <- data_atDate(input$timeSlider)
   valueBox(
-    format(sum(data_latest$recovered), big.mark = " "),
+    format(sum(data$recovered), big.mark = " "),
     subtitle = "Recovered",
     icon     = icon("heart"),
     color    = "light-blue",
@@ -28,7 +28,7 @@ valueBox_recovered <- renderUI({
 valueBox_death <- renderUI({
   data <- data_atDate(input$timeSlider)
   valueBox(
-    format(sum(data_latest$death), big.mark = " "),
+    format(sum(data$death), big.mark = " "),
     subtitle = "Death",
     icon     = icon("heartbeat"),
     color    = "light-blue",
@@ -39,7 +39,7 @@ valueBox_death <- renderUI({
 valueBox_countries <- renderUI({
   data <- data_atDate(input$timeSlider)
   valueBox(
-    nrow(distinct(data_latest, `Country/Region`)),
+    length(unique(data$`Country/Region`)),
     subtitle = "Affected Countries",
     icon     = icon("flag"),
     color    = "light-blue",
