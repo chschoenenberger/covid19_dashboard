@@ -65,7 +65,8 @@ data_evolution$date <- as.Date(data_evolution$date, "%m/%d/%y")
 
 data_atDate <- function(inputDate) {
   data_evolution[which(data_evolution$date == inputDate),] %>%
-    pivot_wider(id_cols = 1:5, names_from = var, values_from = value)
+    pivot_wider(id_cols = 1:5, names_from = var, values_from = value) %>%
+    filter(confirmed > 0 | recovered > 0 | death > 0)
 }
 
 data_latest <- data_atDate(max(data_evolution$date))
