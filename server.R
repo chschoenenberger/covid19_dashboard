@@ -7,4 +7,9 @@ server <- function(input, output) {
   observeEvent(dataLoadingTrigger, {
     updateData()
   })
+
+  observe({
+    data <- data_atDate(input$timeSlider)
+
+  })
 }
