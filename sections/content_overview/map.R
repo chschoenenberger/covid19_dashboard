@@ -15,7 +15,15 @@ addLabel <- function(data) {
 map <- leaflet(addLabel(data_latest)) %>%
   setMaxBounds(-180, -90, 180, 90) %>%
   setView(0, 0, zoom = 2) %>%
-  addTiles()
+  addTiles() %>%
+  addProviderTiles(providers$CartoDB.Positron, group = "Light") %>%
+  addProviderTiles(providers$HERE.satelliteDay, group = "Satellite") %>%
+  addLayersControl(
+    baseGroups    = c("Light", "Satellite"),
+    overlayGroups = c("Confirmed", "Active"),
+    options       = layersControlOptions(collapsed = FALSE)
+  ) %>%
+  hideGroup("Active")
 
 observe({
   req(input$timeSlider)
@@ -43,12 +51,7 @@ observe({
       label        = ~label,
       labelOptions = labelOptions(textsize = 15),
       group        = "Active"
-    ) %>%
-    addLayersControl(
-      overlayGroups = c("Confirmed", "Active"),
-      options       = layersControlOptions(collapsed = FALSE)
-    ) %>%
-    hideGroup("Active")
+    )
 })
 
 output$overview_map <- renderLeaflet(map)

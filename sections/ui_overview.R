@@ -1,6 +1,9 @@
 body_overview <- dashboardBody(
   tags$head(
-    tags$style(type = "text/css", "#overview_map {height: 55vh !important;}")
+    tags$style(type = "text/css", "#overview_map {height: 55vh !important;}"),
+    tags$style(type = 'text/css', ".slider-animate-button { font-size: 20pt !important; }"),
+    tags$style(type = 'text/css', ".slider-animate-container { text-align: left !important; }")
+
   ),
   fluidRow(
     fluidRow(
@@ -29,7 +32,8 @@ body_overview <- dashboardBody(
           max        = max(data_evolution$date),
           value      = max(data_evolution$date),
           width      = "100%",
-          timeFormat = "%d.%m.%Y"
+          timeFormat = "%d.%m.%Y",
+          animate    = animationOptions(loop = TRUE)
         ),
         width = 12,
         style = 'padding-left:15px; padding-right:15px;'
