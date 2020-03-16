@@ -30,8 +30,25 @@ observe({
       stroke       = FALSE,
       fillOpacity  = 0.5,
       label        = ~label,
-      labelOptions = labelOptions(textsize = 15)
-    )
+      labelOptions = labelOptions(textsize = 15),
+      group        = "Confirmed"
+    ) %>%
+    addCircleMarkers(
+      lng          = ~Long,
+      lat          = ~Lat,
+      radius       = ~log(active^(zoomLevel / 2)),
+      stroke       = FALSE,
+      color        = "#f49e19",
+      fillOpacity  = 0.5,
+      label        = ~label,
+      labelOptions = labelOptions(textsize = 15),
+      group        = "Active"
+    ) %>%
+    addLayersControl(
+      overlayGroups = c("Confirmed", "Active"),
+      options       = layersControlOptions(collapsed = FALSE)
+    ) %>%
+    hideGroup("Active")
 })
 
 output$overview_map <- renderLeaflet(map)

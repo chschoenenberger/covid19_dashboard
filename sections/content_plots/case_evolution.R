@@ -138,7 +138,7 @@ output$case_evolution_after100 <- renderPlotly({
 
   data <- data_evolution %>%
     arrange(date) %>%
-    filter(value >= 100) %>%
+    filter(value >= 100 & var == "confirmed") %>%
     group_by(`Country/Region`, population, date) %>%
     filter(if (is.null(input$caseEvolution_countryAfter100th)) TRUE else `Country/Region` %in% input$caseEvolution_countryAfter100th) %>%
     summarise(value = sum(value)) %>%
@@ -197,7 +197,7 @@ output$box_caseEvolution <- renderUI({
             column(
               checkboxInput("checkbox_logCaseEvolutionCountry", label = "Logaritmic Y-Axis", value = FALSE),
               checkboxInput("checkbox_per100kEvolutionCountry", label = "Per Population", value = FALSE),
-              width = 4,
+              width = 3,
               style = "float: right; padding: 10px; margin-right: 50px"
             )
           )
