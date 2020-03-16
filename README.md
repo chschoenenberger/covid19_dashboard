@@ -44,7 +44,7 @@ epidemiology or similar. This dashboard should only display validated
 research or information. Your pull request will not be accepted if you
 are not able to verify your expertise.
 
-## Bugs, Issues & Improvement Requests
+## Bugs, Issues & Enhancement Requests
 If you find any bug / issue or have an idea how to improve the dashboard,
 please create an [issue](https://github.com/chschoenenberger/covid19_dashboard/issues). 
 I will try to look into it as soon as possible.
