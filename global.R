@@ -62,6 +62,12 @@ data_evolution      <- data_confirmed_sub %>%
   pivot_longer(names_to = "var", cols = c(confirmed, recovered, death)) %>%
   ungroup()
 data_evolution$date <- as.Date(data_evolution$date, "%m/%d/%y")
+# Calculating new cases
+data_evolution <- data_evolution %>%
+  arrange(date) %>%
+  group_by(`Province/State`, `Country/Region`) %>%
+  mutate(value_new = value - lag(value, 3, default = 0)) %>%
+  ungroup()
 
 data_atDate <- function(inputDate) {
   data_evolution[which(data_evolution$date == inputDate),] %>%

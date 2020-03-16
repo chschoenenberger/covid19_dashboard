@@ -10,6 +10,5 @@ server <- function(input, output) {
 
   observe({
     data <- data_atDate(input$timeSlider)
-
   })
 }

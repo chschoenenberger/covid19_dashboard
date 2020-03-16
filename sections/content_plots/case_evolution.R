@@ -110,35 +110,60 @@ output$case_evolution_byCountry <- renderPlotly({
   return(p)
 })
 
+output$case_evolution_new <- renderPlotly({
+  data <- data_evolution %>%
+    mutate(var = sapply(var, capFirst)) %>%
+    group_by(date, var) %>%
+    summarise(new_cases = sum(value_new))
+
+  p <- plot_ly(data = data, x = ~date, y = ~new_cases, color = ~var, type = 'bar') %>%
+    layout(
+      yaxis = list(title = "# new cases"),
+      xaxis = list(title = "Date")
+    )
+})
+
 output$box_caseEvolution <- renderUI({
   tagList(
-    box(
-      title = "Evolution of Cases since Outbreak",
-      plotlyOutput("case_evolution"),
-      column(
-        checkboxInput("checkbox_logCaseEvolution", label = "Logaritmic Y-Axis", value = FALSE),
-        width = 3,
-        style = "float: right; padding: 10px; margin-right: 50px"
-      ),
-      width = 6
-    ),
-    box(
-      title = "Cases per Country",
-      plotlyOutput("case_evolution_byCountry"),
-      fluidRow(
+    fluidRow(
+      box(
+        title = "Evolution of Cases since Outbreak",
+        plotlyOutput("case_evolution"),
         column(
-          uiOutput("selectize_countries"),
-          width = 3,
-        ),
-        column(
-          ,
-          width = 2
-        ),
-        column(
-          checkboxInput("checkbox_logCaseEvolutionCountry", label = "Logaritmic Y-Axis", value = FALSE),
+          checkboxInput("checkbox_logCaseEvolution", label = "Logaritmic Y-Axis", value = FALSE),
           width = 3,
           style = "float: right; padding: 10px; margin-right: 50px"
+        ),
+        width = 6
+      ),
+      box(
+        title = "Cases per Country",
+        plotlyOutput("case_evolution_byCountry"),
+        fluidRow(
+          column(
+            uiOutput("selectize_countries"),
+            width = 3,
+          ),
+          column(
+            ,
+            width = 2
+          ),
+          column(
+            checkboxInput("checkbox_logCaseEvolutionCountry", label = "Logaritmic Y-Axis", value = FALSE),
+            width = 3,
+            style = "float: right; padding: 10px; margin-right: 50px"
+          )
         )
       )
-    ))
+    ),
+    fluidRow(
+      column(
+        box(
+          title = "New cases",
+          plotlyOutput("case_evolution_new"),
+          width = 12
+        ), width = 6
+      )
+    )
+  )
 })
