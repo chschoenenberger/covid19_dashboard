@@ -800,6 +800,13 @@
       "Repository": "CRAN",
       "Hash": "ce4f6271baa94776db692f1cb2055bee"
     },
+    "wbstats": {
+      "Package": "wbstats",
+      "Version": "0.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "a7b3a94feff9cf8e3dcb6387390a79c5"
+    },
     "whisker": {
       "Package": "whisker",
       "Version": "0.4",
