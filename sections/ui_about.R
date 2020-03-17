@@ -22,6 +22,13 @@ body_about <- dashboardBody(
             better overview of the current situation concerning the COVID-19 idea. I hereby
             invite all of you to contribute to this project with additional visualizations,
             information etc.",
+            h3("Data"),
+            tags$ul(
+              tags$li(tags$b("COVID-19 data:"), tags$a(href = "https://github.com/CSSEGISandData/COVID-19",
+                "Johns Hopkins CSSE")),
+              tags$li(tags$b("Population data:"), tags$a(href = "https://data.worldbank.org/indicator/SP.POP.TOTL",
+                "The World Bank"), "& Wikipedia for countries which are not in World Bank data set.")
+            ),
             h3("Bugs, Issues & Enhancement Requests"),
             "If you find any bug / issue or have an idea how to improve the dashboard,
             please create an issue on ", tags$a(href = "https://github.com/chschoenenberger/covid19_dashboard/issues",
