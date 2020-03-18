@@ -74,7 +74,7 @@ data_evolution <- data_evolution %>%
 
 data_atDate <- function(inputDate) {
   data_evolution[which(data_evolution$date == inputDate),] %>%
-    pivot_wider(id_cols = 1:5, names_from = var, values_from = value) %>%
+    pivot_wider(id_cols = c("Province/State", "Country/Region", "date", "Lat", "Long", "population"), names_from = var, values_from = value) %>%
     filter(confirmed > 0 |
       recovered > 0 |
       deceased > 0 |
