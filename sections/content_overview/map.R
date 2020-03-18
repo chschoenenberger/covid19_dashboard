@@ -23,15 +23,20 @@ map <- leaflet(addLabel(data_latest)) %>%
   addProviderTiles(providers$HERE.satelliteDay, group = "Satellite") %>%
   addLayersControl(
     baseGroups    = c("Light", "Satellite"),
-    overlayGroups = c("Confirmed", "Active"),
+    overlayGroups = c("Confirmed", "Confirmed (per capita)", "Active", "Active (per capita)"),
     options       = layersControlOptions(collapsed = FALSE)
   ) %>%
-  hideGroup("Active")
+  hideGroup("Confirmed (per capita)") %>%
+  hideGroup("Active") %>%
+  hideGroup("Active (per capita)")
 
 observe({
-  req(input$timeSlider)
-  zoomLevel <- input$overview_map_zoom
-  data      <- data_atDate(input$timeSlider) %>% addLabel()
+  req(input$timeSlider, input$overview_map_zoom)
+  zoomLevel               <- input$overview_map_zoom
+  data                    <- data_atDate(input$timeSlider) %>% addLabel()
+  data$confirmedPerCapita <- data$confirmed / data$population * 100000
+  data$activePerCapita    <- data$active / data$population * 100000
+  browser()
   leafletProxy("overview_map", data = data) %>%
     clearMarkers() %>%
     addCircleMarkers(
@@ -47,6 +52,17 @@ observe({
     addCircleMarkers(
       lng          = ~Long,
       lat          = ~Lat,
+      radius       = ~log(confirmedPerCapita^(zoomLevel)),
+      stroke       = FALSE,
+      color        = "#00b3ff",
+      fillOpacity  = 0.5,
+      label        = ~label,
+      labelOptions = labelOptions(textsize = 15),
+      group        = "Confirmed (per capita)"
+    ) %>%
+    addCircleMarkers(
+      lng          = ~Long,
+      lat          = ~Lat,
       radius       = ~log(active^(zoomLevel / 2)),
       stroke       = FALSE,
       color        = "#f49e19",
@@ -54,6 +70,17 @@ observe({
       label        = ~label,
       labelOptions = labelOptions(textsize = 15),
       group        = "Active"
+    ) %>%
+    addCircleMarkers(
+      lng          = ~Long,
+      lat          = ~Lat,
+      radius       = ~log(activePerCapita^(zoomLevel)),
+      stroke       = FALSE,
+      color        = "#f4d519",
+      fillOpacity  = 0.5,
+      label        = ~label,
+      labelOptions = labelOptions(textsize = 15),
+      group        = "Active (per capita)"
     )
 })
 
