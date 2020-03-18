@@ -4,7 +4,7 @@ value_confirmed <- reactive({
   keyFigures <- list(
     "confirmed" = format(sum(data$confirmed), big.mark = " "),
     "recovered" = format(sum(data$recovered), big.mark = " "),
-    "death"     = format(sum(data$death), big.mark = " "),
+    "deceased"  = format(sum(data$deceased), big.mark = " "),
     "countries" = length(unique(data$`Country/Region`))
   )
   return(keyFigures)
@@ -30,10 +30,10 @@ output$valueBox_recovered <- renderValueBox({
   )
 })
 
-output$valueBox_death <- renderValueBox({
+output$valueBox_deceased <- renderValueBox({
   valueBox(
-    value_confirmed()$death,
-    subtitle = "Death",
+    value_confirmed()$deceased,
+    subtitle = "Deceased",
     icon     = icon("heartbeat"),
     color    = "light-blue"
   )
@@ -54,7 +54,7 @@ output$box_keyFigures <- renderUI(box(
     column(
       valueBoxOutput("valueBox_confirmed", width = 3),
       valueBoxOutput("valueBox_recovered", width = 3),
-      valueBoxOutput("valueBox_death", width = 3),
+      valueBoxOutput("valueBox_deceased", width = 3),
       valueBoxOutput("valueBox_countries", width = 3),
       width = 12,
       style = "margin-left: -20px"

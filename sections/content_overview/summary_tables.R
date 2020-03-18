@@ -23,7 +23,7 @@ summariseData <- function(df, groupBy) {
     summarise(
       "Confirmed" = sum(confirmed),
       "Recovered" = sum(recovered),
-      "Deaths"    = sum(death),
+      "Deceased"  = sum(deceased),
       "Active"    = sum(active)
     ) %>%
     as.data.frame()

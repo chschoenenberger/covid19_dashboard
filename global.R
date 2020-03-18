@@ -34,7 +34,7 @@ updateData()
 
 # TODO: Still throws a warning but works for now
 data_confirmed <- read_csv("data/time_series_19-covid-Confirmed.csv")
-data_death     <- read_csv("data/time_series_19-covid-Deaths.csv")
+data_deceased  <- read_csv("data/time_series_19-covid-Deaths.csv")
 data_recovered <- read_csv("data/time_series_19-covid-Recovered.csv")
 
 # Get latest data
@@ -52,16 +52,16 @@ data_recovered_sub <- data_recovered %>%
   group_by(`Province/State`, `Country/Region`, date, Lat, Long) %>%
   summarise("recovered" = sum(value))
 
-data_death_sub <- data_death %>%
-  pivot_longer(names_to = "date", cols = 5:ncol(data_death)) %>%
+data_deceased_sub <- data_deceased %>%
+  pivot_longer(names_to = "date", cols = 5:ncol(data_deceased)) %>%
   group_by(`Province/State`, `Country/Region`, date, Lat, Long) %>%
-  summarise("death" = sum(value))
+  summarise("deceased" = sum(value))
 
 data_evolution      <- data_confirmed_sub %>%
   full_join(data_recovered_sub) %>%
-  full_join(data_death_sub) %>%
-  mutate(active = (confirmed - recovered - death)) %>%
-  pivot_longer(names_to = "var", cols = c(confirmed, recovered, death, active)) %>%
+  full_join(data_deceased_sub) %>%
+  mutate(active = (confirmed - recovered - deceased)) %>%
+  pivot_longer(names_to = "var", cols = c(confirmed, recovered, deceased, active)) %>%
   ungroup()
 data_evolution$date <- as.Date(data_evolution$date, "%m/%d/%y")
 
@@ -77,11 +77,11 @@ data_atDate <- function(inputDate) {
     pivot_wider(id_cols = 1:5, names_from = var, values_from = value) %>%
     filter(confirmed > 0 |
       recovered > 0 |
-      death > 0 |
+      deceased > 0 |
       active > 0)
 }
 
-rm(data_confirmed, data_confirmed_sub, data_recovered, data_recovered_sub, data_death, data_death_sub)
+rm(data_confirmed, data_confirmed_sub, data_recovered, data_recovered_sub, data_deceased, data_deceased_sub)
 
 # ---- Download population data ----
 population                                                            <- wb(country = "countries_only", indicator = "SP.POP.TOTL", startdate = 2018, enddate = 2020) %>%

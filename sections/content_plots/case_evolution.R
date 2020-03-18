@@ -61,21 +61,21 @@ getDataByCountry <- function(countries, normalizeByPopulation) {
     mutate(Recovered = if_else(normalizeByPopulation, round(Recovered / population * 100000, 2), Recovered)) %>%
     as.data.frame()
 
-  data_death <- data_evolution %>%
+  data_deceased <- data_evolution %>%
     select(`Country/Region`, date, var, value, population) %>%
     filter(`Country/Region` %in% countries &
-      var == "death" &
+      var == "deceased" &
       value > 0) %>%
     group_by(`Country/Region`, date, population) %>%
-    summarise("Death" = sum(value)) %>%
+    summarise("Deceased" = sum(value)) %>%
     arrange(date) %>%
-    mutate(Death = if_else(normalizeByPopulation, round(Death / population * 100000, 2), Death)) %>%
+    mutate(Deceased = if_else(normalizeByPopulation, round(Deceased / population * 100000, 2), Deceased)) %>%
     as.data.frame()
 
   return(list(
     "confirmed" = data_confirmed,
     "recovered" = data_recovered,
-    "death" = data_death
+    "deceased"  = data_deceased
   ))
 }
 
@@ -87,14 +87,14 @@ output$case_evolution_byCountry <- renderPlotly({
     legendgroup     = ~`Country/Region`) %>%
     add_trace(data = data$recovered, x = ~date, y = ~Recovered, color = ~`Country/Region`, line = list(dash = 'dash'),
       legendgroup  = ~`Country/Region`, showlegend = FALSE) %>%
-    add_trace(data = data$death, x = ~date, y = ~Death, color = ~`Country/Region`, line = list(dash = 'dot'),
+    add_trace(data = data$deceased, x = ~date, y = ~Deceased, color = ~`Country/Region`, line = list(dash = 'dot'),
       legendgroup  = ~`Country/Region`, showlegend = FALSE) %>%
     add_trace(data = data$confirmed[which(data$confirmed$`Country/Region` == input$caseEvolution_country[1]),],
       x            = ~date, y = -100, line = list(color = 'rgb(0, 0, 0)'), legendgroup = 'helper', name = "Confirmed") %>%
     add_trace(data = data$confirmed[which(data$confirmed$`Country/Region` == input$caseEvolution_country[1]),],
       x            = ~date, y = -100, line = list(color = 'rgb(0, 0, 0)', dash = 'dash'), legendgroup = 'helper', name = "Recovered") %>%
     add_trace(data = data$confirmed[which(data$confirmed$`Country/Region` == input$caseEvolution_country[1]),],
-      x            = ~date, y = -100, line = list(color = 'rgb(0, 0, 0)', dash = 'dot'), legendgroup = 'helper', name = "Death") %>%
+      x            = ~date, y = -100, line = list(color = 'rgb(0, 0, 0)', dash = 'dot'), legendgroup = 'helper', name = "Deceased") %>%
     layout(
       yaxis = list(title = "# Cases", rangemode = "nonnegative"),
       xaxis = list(title = "Date")
