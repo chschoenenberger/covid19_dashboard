@@ -46,9 +46,12 @@ getDataByCountry <- function(countries, normalizeByPopulation) {
       value > 0) %>%
     group_by(`Country/Region`, date, population) %>%
     summarise("Confirmed" = sum(value)) %>%
-    arrange(date) %>%
-    mutate(Confirmed = if_else(normalizeByPopulation, round(Confirmed / population * 100000, 2), Confirmed)) %>%
-    as.data.frame()
+    arrange(date)
+  if (nrow(data_confirmed) > 0) {
+    data_confirmed <- data_confirmed %>%
+      mutate(Confirmed = if_else(normalizeByPopulation, round(Confirmed / population * 100000, 2), Confirmed))
+  }
+  data_confirmed <- data_confirmed %>% as.data.frame()
 
   data_recovered <- data_evolution %>%
     select(`Country/Region`, date, var, value, population) %>%
@@ -57,9 +60,12 @@ getDataByCountry <- function(countries, normalizeByPopulation) {
       value > 0) %>%
     group_by(`Country/Region`, date, population) %>%
     summarise("Recovered" = sum(value)) %>%
-    arrange(date) %>%
-    mutate(Recovered = if_else(normalizeByPopulation, round(Recovered / population * 100000, 2), Recovered)) %>%
-    as.data.frame()
+    arrange(date)
+  if (nrow(data_recovered) > 0) {
+    data_recovered <- data_recovered %>%
+      mutate(Recovered = if_else(normalizeByPopulation, round(Recovered / population * 100000, 2), Recovered))
+  }
+  data_recovered <- data_recovered %>% as.data.frame()
 
   data_deceased <- data_evolution %>%
     select(`Country/Region`, date, var, value, population) %>%
@@ -68,9 +74,12 @@ getDataByCountry <- function(countries, normalizeByPopulation) {
       value > 0) %>%
     group_by(`Country/Region`, date, population) %>%
     summarise("Deceased" = sum(value)) %>%
-    arrange(date) %>%
-    mutate(Deceased = if_else(normalizeByPopulation, round(Deceased / population * 100000, 2), Deceased)) %>%
-    as.data.frame()
+    arrange(date)
+  if (nrow(data_deceased) > 0) {
+    data_deceased <- data_deceased %>%
+      mutate(Deceased = if_else(normalizeByPopulation, round(Deceased / population * 100000, 2), Deceased))
+  }
+  data_deceased <- data_deceased %>% as.data.frame()
 
   return(list(
     "confirmed" = data_confirmed,
@@ -212,40 +221,39 @@ output$box_caseEvolution <- renderUI({
       )
     ),
     fluidRow(
-      column(
-        box(
-          title = "Cases per Country",
-          plotlyOutput("case_evolution_byCountry"),
-          fluidRow(
-            column(
-              uiOutput("selectize_casesByCountries"),
-              width = 3,
-            ),
-            column(
-              checkboxInput("checkbox_logCaseEvolutionCountry", label = "Logaritmic Y-Axis", value = FALSE),
-              checkboxInput("checkbox_per100kEvolutionCountry", label = "Per Population", value = FALSE),
-              width = 3,
-              style = "float: right; padding: 10px; margin-right: 50px"
-            )
+      box(
+        title = "Cases per Country",
+        plotlyOutput("case_evolution_byCountry"),
+        fluidRow(
+          column(
+            uiOutput("selectize_casesByCountries"),
+            width = 3,
+          ),
+          column(
+            checkboxInput("checkbox_logCaseEvolutionCountry", label = "Logaritmic Y-Axis", value = FALSE),
+            checkboxInput("checkbox_per100kEvolutionCountry", label = "Per Population", value = FALSE),
+            width = 3,
+            style = "float: right; padding: 10px; margin-right: 50px"
           )
         ),
-        box(
-          title = "Evolution of Cases since 100th case",
-          plotlyOutput("case_evolution_after100"),
-          fluidRow(
-            column(
-              uiOutput("selectize_casesByCountriesAfter100th"),
-              width = 3,
-            ),
-            column(
-              checkboxInput("checkbox_logCaseEvolution100th", label = "Logaritmic Y-Axis", value = FALSE),
-              checkboxInput("checkbox_per100kEvolutionCountry100th", label = "Per Population", value = FALSE),
-              width = 3,
-              style = "float: right; padding: 10px; margin-right: 50px"
-            )
+        width = 6
+      ),
+      box(
+        title = "Evolution of Cases since 100th case",
+        plotlyOutput("case_evolution_after100"),
+        fluidRow(
+          column(
+            uiOutput("selectize_casesByCountriesAfter100th"),
+            width = 3,
+          ),
+          column(
+            checkboxInput("checkbox_logCaseEvolution100th", label = "Logaritmic Y-Axis", value = FALSE),
+            checkboxInput("checkbox_per100kEvolutionCountry100th", label = "Per Population", value = FALSE),
+            width = 3,
+            style = "float: right; padding: 10px; margin-right: 50px"
           )
         ),
-        width = 12
+        width = 6
       )
     )
   )
