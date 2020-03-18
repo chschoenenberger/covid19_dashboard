@@ -41,7 +41,7 @@ output$valueBox_death <- renderValueBox({
 
 output$valueBox_countries <- renderValueBox({
   valueBox(
-    value_confirmed()$countries,
+    paste(value_confirmed()$countries, "/ 195"),
     subtitle = "Affected Countries",
     icon     = icon("flag"),
     color    = "light-blue"

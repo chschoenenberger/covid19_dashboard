@@ -110,11 +110,28 @@ output$case_evolution_byCountry <- renderPlotly({
   return(p)
 })
 
+output$selectize_casesByCountries_new <- renderUI({
+  selectizeInput(
+    "selectize_casesByCountries_new",
+    label    = "Select Country",
+    choices  = c("All", unique(data_evolution$`Country/Region`)),
+    selected = "All"
+  )
+})
+
 output$case_evolution_new <- renderPlotly({
+  req(input$selectize_casesByCountries_new)
   data <- data_evolution %>%
     mutate(var = sapply(var, capFirst)) %>%
-    group_by(date, var) %>%
+    filter(if (input$selectize_casesByCountries_new == "All") TRUE else `Country/Region` %in% input$selectize_casesByCountries_new) %>%
+    group_by(date, var, `Country/Region`) %>%
     summarise(new_cases = sum(value_new))
+
+  if (input$selectize_casesByCountries_new == "All") {
+    data <- data %>%
+      group_by(date, var) %>%
+      summarise(new_cases = sum(new_cases))
+  }
 
   p <- plot_ly(data = data, x = ~date, y = ~new_cases, color = ~var, type = 'bar') %>%
     layout(
@@ -181,6 +198,16 @@ output$box_caseEvolution <- renderUI({
       box(
         title = "New cases",
         plotlyOutput("case_evolution_new"),
+        column(
+          uiOutput("selectize_casesByCountries_new"),
+          width = 3,
+        ),
+        column(
+          HTML("Note: Active cases are calculated as <i>Confirmed - (Recovered + Deceased)</i>. Therefore, <i>new</i> active cases can
+          be negative for some days, if on this day there were more new recovered + deceased cases than there were new
+          confirmed cases."),
+          width = 7
+        ),
         width = 6
       )
     ),
