@@ -22,6 +22,11 @@ body_about <- dashboardBody(
             better overview of the current situation concerning the COVID-19 idea. I hereby
             invite all of you to contribute to this project with additional visualizations,
             information etc.",
+            tags$br(),
+            tags$br(),
+            "Find more thoughts on this dashboard from Christoph Schoenenberger in this",
+            tags$a(href = "https://medium.com/@ch.schoenenberger/covid-19-open-source-dashboard-fa1d2b4cd985",
+              "Medium article"), ".",
             h3("Data"),
             tags$ul(
               tags$li(tags$b("COVID-19 data:"), tags$a(href = "https://github.com/CSSEGISandData/COVID-19",

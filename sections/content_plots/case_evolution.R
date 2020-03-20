@@ -184,7 +184,7 @@ output$case_evolution_after100 <- renderPlotly({
   if (input$checkbox_logCaseEvolution100th) {
     p <- layout(p, yaxis = list(type = "log"))
   }
-  if (input$checkbox_per100kEvolutionCountry) {
+  if (input$checkbox_per100kEvolutionCountry100th) {
     p <- layout(p, yaxis = list(title = "# Cases per 100k Inhabitants"))
   }
 
