@@ -1,4 +1,4 @@
-output$summaryTable <- renderUI({
+output$overviewTables <- renderUI({
   tabBox(
     tabPanel("Country/Region", dataTableOutput("summaryDT_country")),
     tabPanel("Province/State", dataTableOutput("summaryDT_state")),

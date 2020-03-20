@@ -1,18 +1,39 @@
-value_confirmed <- reactive({
-  data <- data_atDate(input$timeSlider)
+sumData <- function(date) {
+  if (date >= min(data_evolution$date)) {
+    data <- data_atDate(date) %>% summarise(
+      confirmed = sum(confirmed),
+      recovered = sum(recovered),
+      deceased  = sum(deceased),
+      countries = n_distinct(`Country/Region`)
+    )
+    return(data)
+  }
+  return(NULL)
+}
+
+key_figures <- reactive({
+  data           <- sumData(input$timeSlider)
+  data_yesterday <- sumData(input$timeSlider - 1)
+
+  data_new <- list(
+    new_confirmed = (data$confirmed - data_yesterday$confirmed) / data_yesterday$confirmed * 100,
+    new_recovered = (data$recovered - data_yesterday$recovered) / data_yesterday$recovered * 100,
+    new_deceased  = (data$deceased - data_yesterday$deceased) / data_yesterday$deceased * 100,
+    new_countries = data$countries - data_yesterday$countries
+  )
 
   keyFigures <- list(
-    "confirmed" = format(sum(data$confirmed), big.mark = " "),
-    "recovered" = format(sum(data$recovered), big.mark = " "),
-    "deceased"  = format(sum(data$deceased), big.mark = " "),
-    "countries" = length(unique(data$`Country/Region`))
+    "confirmed" = HTML(paste(format(data$confirmed, big.mark = " "), sprintf("<h4>(%+.1f %%)</h4>", data_new$new_confirmed))),
+    "recovered" = HTML(paste(format(data$recovered, big.mark = " "), sprintf("<h4>(%+.1f %%)</h4>", data_new$new_recovered))),
+    "deceased"  = HTML(paste(format(data$deceased, big.mark = " "), sprintf("<h4>(%+.1f %%)</h4>", data_new$new_deceased))),
+    "countries" = HTML(paste(format(data$countries, big.mark = " "), "/ 195", sprintf("<h4>(%+d)</h4>", data_new$new_countries)))
   )
   return(keyFigures)
 })
 
 output$valueBox_confirmed <- renderValueBox({
   valueBox(
-    value_confirmed()$confirmed,
+    key_figures()$confirmed,
     subtitle = "Confirmed",
     icon     = icon("file-medical"),
     color    = "light-blue",
@@ -23,7 +44,7 @@ output$valueBox_confirmed <- renderValueBox({
 
 output$valueBox_recovered <- renderValueBox({
   valueBox(
-    value_confirmed()$recovered,
+    key_figures()$recovered,
     subtitle = "Recovered",
     icon     = icon("heart"),
     color    = "light-blue"
@@ -32,7 +53,7 @@ output$valueBox_recovered <- renderValueBox({
 
 output$valueBox_deceased <- renderValueBox({
   valueBox(
-    value_confirmed()$deceased,
+    key_figures()$deceased,
     subtitle = "Deceased",
     icon     = icon("heartbeat"),
     color    = "light-blue"
@@ -41,7 +62,7 @@ output$valueBox_deceased <- renderValueBox({
 
 output$valueBox_countries <- renderValueBox({
   valueBox(
-    paste(value_confirmed()$countries, "/ 195"),
+    key_figures()$countries,
     subtitle = "Affected Countries",
     icon     = icon("flag"),
     color    = "light-blue"

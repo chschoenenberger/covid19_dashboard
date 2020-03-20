@@ -19,7 +19,7 @@ body_overview <- dashboardBody(
         style = 'padding:0px;'
       ),
       column(
-        uiOutput("summaryTable"),
+        uiOutput("overviewTables"),
         width = 4,
         style = 'padding:0px;'
       )),
