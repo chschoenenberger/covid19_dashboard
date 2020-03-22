@@ -10,7 +10,7 @@ library("wbstats")
 
 source("utils.R", local = T)
 
-download <- function() {
+downloadGithubData <- function() {
   download.file(
     url      = "https://github.com/CSSEGISandData/COVID-19/archive/master.zip",
     destfile = "data/covid19_data.zip"
