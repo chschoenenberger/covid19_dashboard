@@ -23,10 +23,12 @@ map <- leaflet(addLabel(data_latest)) %>%
   addProviderTiles(providers$HERE.satelliteDay, group = "Satellite") %>%
   addLayersControl(
     baseGroups    = c("Light", "Satellite"),
-    overlayGroups = c("Confirmed", "Confirmed (per capita)", "Active", "Active (per capita)"),
+    overlayGroups = c("Confirmed", "Confirmed (per capita)", "Recovered", "Deceased", "Active", "Active (per capita)"),
     options       = layersControlOptions(collapsed = FALSE)
   ) %>%
   hideGroup("Confirmed (per capita)") %>%
+  hideGroup("Recovered") %>%
+  hideGroup("Deceased") %>%
   hideGroup("Active") %>%
   hideGroup("Active (per capita)")
 
@@ -59,6 +61,28 @@ observe({
       label        = ~label,
       labelOptions = labelOptions(textsize = 15),
       group        = "Confirmed (per capita)"
+    ) %>%
+    addCircleMarkers(
+      lng          = ~Long,
+      lat          = ~Lat,
+      radius       = ~log(recovered^(zoomLevel)),
+      stroke       = FALSE,
+      color        = "#005900",
+      fillOpacity  = 0.5,
+      label        = ~label,
+      labelOptions = labelOptions(textsize = 15),
+      group        = "Recovered"
+    ) %>%
+    addCircleMarkers(
+      lng          = ~Long,
+      lat          = ~Lat,
+      radius       = ~log(deceased^(zoomLevel)),
+      stroke       = FALSE,
+      color        = "#E7590B",
+      fillOpacity  = 0.5,
+      label        = ~label,
+      labelOptions = labelOptions(textsize = 15),
+      group        = "Deceased"
     ) %>%
     addCircleMarkers(
       lng          = ~Long,
