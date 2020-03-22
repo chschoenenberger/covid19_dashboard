@@ -43,7 +43,6 @@ observeEvent(input$summaryDT_country_row_last_clicked, {
 observeEvent(input$summaryDT_state_row_last_clicked, {
   selectedRow     <- input$summaryDT_state_row_last_clicked
   selectedCountry <- summariseData(data_atDate(input$timeSlider), "Province/State")[selectedRow, "Province/State"]
-  browser()
   location <- data_evolution %>%
     distinct(`Province/State`, Lat, Long) %>%
     filter(`Province/State` == selectedCountry) %>%
