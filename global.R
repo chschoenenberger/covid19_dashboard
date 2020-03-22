@@ -35,7 +35,7 @@ updateData <- function() {
   else
   {
     dir.create('data')
-    download()
+    downloadGithubData()
   }
 }
 
