@@ -10,25 +10,35 @@ library("wbstats")
 
 source("utils.R", local = T)
 
+download <- function() {
+  download.file(
+    url      = "https://github.com/CSSEGISandData/COVID-19/archive/master.zip",
+    destfile = "data/covid19_data.zip"
+  )
+  
+  data_path <- "COVID-19-master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-"
+  unzip(
+    zipfile   = "data/covid19_data.zip",
+    files     = paste0(data_path, c("Confirmed.csv", "Deaths.csv", "Recovered.csv")),
+    exdir     = "data",
+    junkpaths = T
+  )
+}
+
+
 updateData <- function() {
   # Download data from Johns Hopkins (https://github.com/CSSEGISandData/COVID-19) if the data is older than 0.5h
-  if (as.double(Sys.time() - file_info("data/covid19_data.zip")$change_time, units = "hours") > 0.5) {
+  if ((file.exists("data/covid19_data.zip")) &&  (as.double(Sys.time() - file_info("data/covid19_data.zip")$change_time, units = "hours") > 0.5)) {
     file_delete("data/covid19_data.zip")
-
-    download.file(
-      url      = "https://github.com/CSSEGISandData/COVID-19/archive/master.zip",
-      destfile = "data/covid19_data.zip"
-    )
-
-    data_path <- "COVID-19-master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-"
-    unzip(
-      zipfile   = "data/covid19_data.zip",
-      files     = paste0(data_path, c("Confirmed.csv", "Deaths.csv", "Recovered.csv")),
-      exdir     = "data",
-      junkpaths = T
-    )
+    download()
+  } 
+  else
+  {
+    dir.create('data')
+    download()
   }
 }
+
 # Update with start of app
 updateData()
 
