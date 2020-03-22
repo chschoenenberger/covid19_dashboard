@@ -1,6 +1,7 @@
 source("sections/ui_overview.R", local = TRUE)
 source("sections/ui_plots.R", local = TRUE)
 source("sections/ui_about.R", local = TRUE)
+source("sections/ui_fullTable.R", local = TRUE)
 
 ui <- tagList(
   tags$head(
@@ -10,15 +11,14 @@ ui <- tagList(
   tags$style(type = "text/css", ".navbar {margin-bottom: 0px;}"),
   tags$style(type = "text/css", ".content {padding: 0px;}"),
   tags$style(type = "text/css", ".row {margin-left: 0px; margin-right: 0px;}"),
-  tags$style(HTML("::-webkit-scrollbar { display: none; }")),
   tags$style(HTML(".col-sm-12 { padding: 5px; margin-bottom: -15px; }")),
   tags$style(HTML(".col-sm-6 { padding: 5px; margin-bottom: -15px; }")),
-  tags$style(HTML("::-webkit-scrollbar { display: none; }")),
   navbarPage(
     title       = "COVID-19 Global Cases - Open Source Version",
     collapsible = TRUE,
     fluid       = TRUE,
     tabPanel("Overview", page_overview, value = "page-overview"),
+    tabPanel("Table", page_fullTable, value = "page-fullTable"),
     tabPanel("Plots", page_plots, value = "page-plots"),
     tabPanel("About", page_about, value = "page-about"),
     tags$script(HTML("var header = $('.navbar > .container-fluid');

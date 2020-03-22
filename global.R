@@ -119,6 +119,7 @@ rm(population, countryNamesPop, countryNamesDat, noDataCountries)
 data_latest <- data_atDate(max(data_evolution$date))
 
 top5_countries <- data_evolution %>%
+  filter(var == "active", date == current_date) %>%
   group_by(`Country/Region`) %>%
   summarise(value = sum(value)) %>%
   arrange(desc(value)) %>%

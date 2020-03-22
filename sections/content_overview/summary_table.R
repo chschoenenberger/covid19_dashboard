@@ -1,4 +1,4 @@
-output$summaryTable <- renderUI({
+output$summaryTables <- renderUI({
   tabBox(
     tabPanel("Country/Region", dataTableOutput("summaryDT_country")),
     tabPanel("Province/State", dataTableOutput("summaryDT_state")),
@@ -35,7 +35,8 @@ getSummaryDT <- function(data, groupBy, selectable = FALSE) {
     rownames  = FALSE,
     options   = list(
       order          = list(1, "desc"),
-      scrollY        = "45.5vh",
+      scrollX        = TRUE,
+      scrollY        = "38.5vh",
       scrollCollapse = T,
       dom            = 't',
       paging         = FALSE

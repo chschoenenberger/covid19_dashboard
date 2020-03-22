@@ -1,6 +1,6 @@
 body_overview <- dashboardBody(
   tags$head(
-    tags$style(type = "text/css", "#overview_map {height: 55vh !important;}"),
+    tags$style(type = "text/css", "#overview_map {height: 48vh !important;}"),
     tags$style(type = 'text/css', ".slider-animate-button { font-size: 20pt !important; }"),
     tags$style(type = 'text/css', ".slider-animate-container { text-align: left !important; }")
 
@@ -19,7 +19,7 @@ body_overview <- dashboardBody(
         style = 'padding:0px;'
       ),
       column(
-        uiOutput("summaryTable"),
+        uiOutput("summaryTables"),
         width = 4,
         style = 'padding:0px;'
       )),
