@@ -23,8 +23,7 @@ map <- leaflet(addLabel(data_latest)) %>%
   addProviderTiles(providers$HERE.satelliteDay, group = "Satellite") %>%
   addLayersControl(
     baseGroups    = c("Light", "Satellite"),
-    overlayGroups = c("Confirmed", "Confirmed (per capita)", "Recovered", "Deceased", "Active", "Active (per capita)"),
-    options       = layersControlOptions(collapsed = FALSE)
+    overlayGroups = c("Confirmed", "Confirmed (per capita)", "Recovered", "Deceased", "Active", "Active (per capita)")
   ) %>%
   hideGroup("Confirmed (per capita)") %>%
   hideGroup("Recovered") %>%
