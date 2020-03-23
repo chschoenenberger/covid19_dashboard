@@ -3,7 +3,8 @@ source("sections/ui_plots.R", local = TRUE)
 source("sections/ui_about.R", local = TRUE)
 source("sections/ui_fullTable.R", local = TRUE)
 
-ui <- tagList(
+ui <- fluidPage(
+  title = "COVID-19 Global Cases - Open Source Version",
   tags$head(
     tags$link(rel = "shortcut icon", type = "image/png", href = "logo.png")
   ),
@@ -14,7 +15,7 @@ ui <- tagList(
   tags$style(HTML(".col-sm-12 { padding: 5px; margin-bottom: -15px; }")),
   tags$style(HTML(".col-sm-6 { padding: 5px; margin-bottom: -15px; }")),
   navbarPage(
-    title       = "COVID-19 Global Cases - Open Source Version",
+    title       = div("COVID-19 Global Cases - Open Source Version", style = "padding-left: 10px"),
     collapsible = TRUE,
     fluid       = TRUE,
     tabPanel("Overview", page_overview, value = "page-overview"),

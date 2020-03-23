@@ -17,7 +17,7 @@ addLabel <- function(data) {
 
 map <- leaflet(addLabel(data_latest)) %>%
   setMaxBounds(-180, -90, 180, 90) %>%
-  setView(0, 0, zoom = 2) %>%
+  setView(0, 20, zoom = 2) %>%
   addTiles() %>%
   addProviderTiles(providers$CartoDB.Positron, group = "Light") %>%
   addProviderTiles(providers$HERE.satelliteDay, group = "Satellite") %>%
@@ -30,7 +30,13 @@ map <- leaflet(addLabel(data_latest)) %>%
   hideGroup("Recovered") %>%
   hideGroup("Deceased") %>%
   hideGroup("Active") %>%
-  hideGroup("Active (per capita)")
+  hideGroup("Active (per capita)") %>%
+  addEasyButton(easyButton(
+    icon    = "glyphicon glyphicon-globe", title = "Reset zoom",
+    onClick = JS("function(btn, map){ map.setView([20, 0], 2); }"))) %>%
+  addEasyButton(easyButton(
+    icon    = "glyphicon glyphicon-map-marker", title = "Locate Me",
+    onClick = JS("function(btn, map){ map.locate({setView: true, maxZoom: 6}); }")))
 
 observe({
   req(input$timeSlider, input$overview_map_zoom)
