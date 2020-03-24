@@ -1,5 +1,5 @@
 getFullTableData <- function(groupBy) {
-  padding_left <- max(str_length(data_evolution$value_new))
+  padding_left <- max(str_length(data_evolution$value_new), na.rm = TRUE)
   data         <- data_evolution %>%
     filter(date == current_date) %>%
     pivot_wider(names_from = var, values_from = c(value, value_new)) %>%
@@ -48,11 +48,13 @@ getFullTableData <- function(groupBy) {
       active_new    = str_c(str_pad(active_new, width = padding_left, side = "left", pad = "0"), "|",
         active_new, if_else(!is.na(active_newPer), sprintf(" (%+.2f %%)", active_newPer), ""))
     ) %>%
-    select(-population)
+    select(-population) %>%
+    as.data.frame()
 }
 
 output$fullTable <- renderDataTable({
   data       <- getFullTableData("Country/Region")
+  browser()
   columNames <- c(
     "Country",
     "Total Confirmed",
@@ -84,12 +86,14 @@ output$fullTable <- renderDataTable({
           targets = c(2, 5, 7, 9),
           render  = JS(
             "function(data, type, row, meta) {
+              if (data != null) {
                 split = data.split('|')
                 if (type == 'display') {
                   return split[1];
                 } else {
                   return split[0];
                 }
+              }
             }"
           )
         ),
@@ -106,24 +110,24 @@ output$fullTable <- renderDataTable({
     formatStyle(
       columns         = "confirmed_new",
       valueColumns    = "confirmed_newPer",
-      backgroundColor = styleInterval(c(10, 20, 33, 50, 75), c("#FFFFFF", "#FFE5E5", "#FFB2B2", "#FF7F7F", "#FF4C4C", "#983232")),
+      backgroundColor = styleInterval(c(10, 20, 33, 50, 75), c("NULL", "#FFE5E5", "#FFB2B2", "#FF7F7F", "#FF4C4C", "#983232")),
       color           = styleInterval(75, c("#000000", "#FFFFFF"))
     ) %>%
     formatStyle(
       columns         = "deceased_new",
       valueColumns    = "deceased_newPer",
-      backgroundColor = styleInterval(c(10, 20, 33, 50, 75), c("#FFFFFF", "#FFE5E5", "#FFB2B2", "#FF7F7F", "#FF4C4C", "#983232")),
+      backgroundColor = styleInterval(c(10, 20, 33, 50, 75), c("NULL", "#FFE5E5", "#FFB2B2", "#FF7F7F", "#FF4C4C", "#983232")),
       color           = styleInterval(75, c("#000000", "#FFFFFF"))
     ) %>%
     formatStyle(
       columns         = "active_new",
       valueColumns    = "active_newPer",
-      backgroundColor = styleInterval(c(-33, -20, -10, 10, 20, 33, 50, 75), c("#66B066", "#99CA99", "#CCE4CC", "#FFFFFF", "#FFE5E5", "#FFB2B2", "#FF7F7F", "#FF4C4C", "#983232")),
+      backgroundColor = styleInterval(c(-33, -20, -10, 10, 20, 33, 50, 75), c("#66B066", "#99CA99", "#CCE4CC", "NULL", "#FFE5E5", "#FFB2B2", "#FF7F7F", "#FF4C4C", "#983232")),
       color           = styleInterval(75, c("#000000", "#FFFFFF"))
     ) %>%
     formatStyle(
       columns         = "recovered_new",
       valueColumns    = "recovered_newPer",
-      backgroundColor = styleInterval(c(10, 20, 33), c("#FFFFFF", "#CCE4CC", "#99CA99", "#66B066"))
+      backgroundColor = styleInterval(c(10, 20, 33), c("NULL", "#CCE4CC", "#99CA99", "#66B066"))
     )
 })

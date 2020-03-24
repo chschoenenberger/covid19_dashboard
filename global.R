@@ -76,6 +76,7 @@ data_evolution$date <- as.Date(data_evolution$date, "%m/%d/%y")
 data_evolution <- data_evolution %>%
   arrange(date) %>%
   group_by(`Province/State`, `Country/Region`) %>%
+  fill(value) %>%
   mutate(value_new = value - lag(value, 4, default = 0)) %>%
   ungroup()
 
