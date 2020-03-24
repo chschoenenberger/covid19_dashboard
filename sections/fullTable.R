@@ -54,7 +54,6 @@ getFullTableData <- function(groupBy) {
 
 output$fullTable <- renderDataTable({
   data       <- getFullTableData("Country/Region")
-  browser()
   columNames <- c(
     "Country",
     "Total Confirmed",
