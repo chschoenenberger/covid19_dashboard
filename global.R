@@ -16,10 +16,10 @@ downloadGithubData <- function() {
     destfile = "data/covid19_data.zip"
   )
   
-  data_path <- "COVID-19-master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-"
+  data_path <- "COVID-19-master/csse_covid_19_data/csse_covid_19_time_series/"
   unzip(
     zipfile   = "data/covid19_data.zip",
-    files     = paste0(data_path, c("Confirmed.csv", "Deaths.csv", "Recovered.csv")),
+    files     = paste0(data_path, c("time_series_covid19_confirmed_global.csv", "time_series_covid19_deaths_global.csv", "time_series_19-covid-Recovered.csv")),
     exdir     = "data",
     junkpaths = T
   )
@@ -40,8 +40,8 @@ updateData <- function() {
 updateData()
 
 # TODO: Still throws a warning but works for now
-data_confirmed <- read_csv("data/time_series_19-covid-Confirmed.csv")
-data_deceased  <- read_csv("data/time_series_19-covid-Deaths.csv")
+data_confirmed <- read_csv("data/time_series_covid19_confirmed_global.csv")
+data_deceased  <- read_csv("data/time_series_covid19_deaths_global.csv")
 data_recovered <- read_csv("data/time_series_19-covid-Recovered.csv")
 
 # Get latest data
