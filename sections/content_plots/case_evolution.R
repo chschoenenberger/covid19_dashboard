@@ -198,7 +198,7 @@ output$box_caseEvolution <- renderUI({
         title = "Evolution of Cases since Outbreak",
         plotlyOutput("case_evolution"),
         column(
-          checkboxInput("checkbox_logCaseEvolution", label = "Logaritmic Y-Axis", value = FALSE),
+          checkboxInput("checkbox_logCaseEvolution", label = "Logarithmic Y-Axis", value = FALSE),
           width = 3,
           style = "float: right; padding: 10px; margin-right: 50px"
         ),
@@ -230,7 +230,7 @@ output$box_caseEvolution <- renderUI({
             width = 3,
           ),
           column(
-            checkboxInput("checkbox_logCaseEvolutionCountry", label = "Logaritmic Y-Axis", value = FALSE),
+            checkboxInput("checkbox_logCaseEvolutionCountry", label = "Logarithmic Y-Axis", value = FALSE),
             checkboxInput("checkbox_per100kEvolutionCountry", label = "Per Population", value = FALSE),
             width = 3,
             style = "float: right; padding: 10px; margin-right: 50px"
@@ -247,7 +247,7 @@ output$box_caseEvolution <- renderUI({
             width = 3,
           ),
           column(
-            checkboxInput("checkbox_logCaseEvolution100th", label = "Logaritmic Y-Axis", value = FALSE),
+            checkboxInput("checkbox_logCaseEvolution100th", label = "Logarithmic Y-Axis", value = FALSE),
             checkboxInput("checkbox_per100kEvolutionCountry100th", label = "Per Population", value = FALSE),
             width = 3,
             style = "float: right; padding: 10px; margin-right: 50px"
