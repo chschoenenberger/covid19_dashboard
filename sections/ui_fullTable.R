@@ -13,7 +13,8 @@ body_fullTable <- dashboardBody(
     tags$style(type = "text/css", ".legend .neg1 { background-color: #FFFFFF; }"),
     tags$style(type = "text/css", ".legend .neg2 { background-color: #CCE4CC; }"),
     tags$style(type = "text/css", ".legend .neg3 { background-color: #99CA99; }"),
-    tags$style(type = "text/css", ".legend .neg4 { background-color: #66B066; }")
+    tags$style(type = "text/css", ".legend .neg4 { background-color: #66B066; }"),
+    tags$style(type = "text/css", "@media (min-width: 768px) { .full-table { margin-top: -30px; } }")
   ),
   fluidPage(
     fluidRow(
@@ -21,7 +22,7 @@ body_fullTable <- dashboardBody(
         class = "box-title", style = "margin-top: 10px; font-size: 18px;"),
       div(
         dataTableOutput("fullTable"),
-        style = "margin-top: -30px"
+        class = "full-table"
       ),
       div(
         tags$h5("Growth Rate Coloring", style = "margin-left: 10px;"),
