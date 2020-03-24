@@ -8,27 +8,27 @@ getFullTableData <- function(groupBy) {
       "Province/State"      = "World",
       "Country/Region"      = "World",
       "population"          = 7800000000,
-      "value_confirmed"     = sum(.$value_confirmed),
-      "value_new_confirmed" = sum(.$value_new_confirmed),
-      "value_recovered"     = sum(.$value_recovered),
-      "value_new_recovered" = sum(.$value_new_recovered),
-      "value_deceased"      = sum(.$value_deceased),
-      "value_new_deceased"  = sum(.$value_new_deceased),
-      "value_active"        = sum(.$value_active),
-      "value_new_active"    = sum(.$value_new_active)
+      "value_confirmed"     = sum(.$value_confirmed, na.rm = T),
+      "value_new_confirmed" = sum(.$value_new_confirmed, na.rm = T),
+      "value_recovered"     = sum(.$value_recovered, na.rm = T),
+      "value_new_recovered" = sum(.$value_new_recovered, na.rm = T),
+      "value_deceased"      = sum(.$value_deceased, na.rm = T),
+      "value_new_deceased"  = sum(.$value_new_deceased, na.rm = T),
+      "value_active"        = sum(.$value_active, na.rm = T),
+      "value_new_active"    = sum(.$value_new_active, na.rm = T)
     ) %>%
     group_by(!!sym(groupBy), population) %>%
     summarise(
-      confirmed_total     = sum(value_confirmed),
-      confirmed_new       = sum(value_new_confirmed),
-      confirmed_totalNorm = round(sum(value_confirmed) / max(population) * 100000, 2),
-      recovered_total     = sum(value_recovered),
-      recovered_new       = sum(value_new_recovered),
-      deceased_total      = sum(value_deceased),
-      deceased_new        = sum(value_new_deceased),
-      active_total        = sum(value_active),
-      active_new          = sum(value_new_active),
-      active_totalNorm    = round(sum(value_active) / max(population) * 100000, 2)
+      confirmed_total     = sum(value_confirmed, na.rm = T),
+      confirmed_new       = sum(value_new_confirmed, na.rm = T),
+      confirmed_totalNorm = round(sum(value_confirmed, na.rm = T) / max(population, na.rm = T) * 100000, 2),
+      recovered_total     = sum(value_recovered, na.rm = T),
+      recovered_new       = sum(value_new_recovered, na.rm = T),
+      deceased_total      = sum(value_deceased, na.rm = T),
+      deceased_new        = sum(value_new_deceased, na.rm = T),
+      active_total        = sum(value_active, na.rm = T),
+      active_new          = sum(value_new_active, na.rm = T),
+      active_totalNorm    = round(sum(value_active, na.rm = T) / max(population, na.rm = T) * 100000, 2)
     ) %>%
     mutate(
       "confirmed_newPer" = confirmed_new / (confirmed_total - confirmed_new) * 100,

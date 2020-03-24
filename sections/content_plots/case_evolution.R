@@ -2,7 +2,7 @@ output$case_evolution <- renderPlotly({
   data <- data_evolution %>%
     group_by(date, var) %>%
     summarise(
-      "value" = sum(value)
+      "value" = sum(value, na.rm = T)
     ) %>%
     as.data.frame()
 
@@ -45,7 +45,7 @@ getDataByCountry <- function(countries, normalizeByPopulation) {
       var == "confirmed" &
       value > 0) %>%
     group_by(`Country/Region`, date, population) %>%
-    summarise("Confirmed" = sum(value)) %>%
+    summarise("Confirmed" = sum(value, na.rm = T)) %>%
     arrange(date)
   if (nrow(data_confirmed) > 0) {
     data_confirmed <- data_confirmed %>%
@@ -59,7 +59,7 @@ getDataByCountry <- function(countries, normalizeByPopulation) {
       var == "recovered" &
       value > 0) %>%
     group_by(`Country/Region`, date, population) %>%
-    summarise("Recovered" = sum(value)) %>%
+    summarise("Recovered" = sum(value, na.rm = T)) %>%
     arrange(date)
   if (nrow(data_recovered) > 0) {
     data_recovered <- data_recovered %>%
@@ -73,7 +73,7 @@ getDataByCountry <- function(countries, normalizeByPopulation) {
       var == "deceased" &
       value > 0) %>%
     group_by(`Country/Region`, date, population) %>%
-    summarise("Deceased" = sum(value)) %>%
+    summarise("Deceased" = sum(value, na.rm = T)) %>%
     arrange(date)
   if (nrow(data_deceased) > 0) {
     data_deceased <- data_deceased %>%
@@ -134,12 +134,12 @@ output$case_evolution_new <- renderPlotly({
     mutate(var = sapply(var, capFirst)) %>%
     filter(if (input$selectize_casesByCountries_new == "All") TRUE else `Country/Region` %in% input$selectize_casesByCountries_new) %>%
     group_by(date, var, `Country/Region`) %>%
-    summarise(new_cases = sum(value_new))
+    summarise(new_cases = sum(value_new, na.rm = T))
 
   if (input$selectize_casesByCountries_new == "All") {
     data <- data %>%
       group_by(date, var) %>%
-      summarise(new_cases = sum(new_cases))
+      summarise(new_cases = sum(new_cases, na.rm = T))
   }
 
   p <- plot_ly(data = data, x = ~date, y = ~new_cases, color = ~var, type = 'bar') %>%
@@ -167,7 +167,7 @@ output$case_evolution_after100 <- renderPlotly({
     filter(value >= 100 & var == "confirmed") %>%
     group_by(`Country/Region`, population, date) %>%
     filter(if (is.null(input$caseEvolution_countryAfter100th)) TRUE else `Country/Region` %in% input$caseEvolution_countryAfter100th) %>%
-    summarise(value = sum(value)) %>%
+    summarise(value = sum(value, na.rm = T)) %>%
     mutate("daysSince" = row_number()) %>%
     ungroup()
 
