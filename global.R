@@ -12,8 +12,8 @@ source("utils.R", local = T)
 
 downloadGithubData <- function() {
   download.file(
-    url      = "https://github.com/CSSEGISandData/COVID-19/archive/master.zip",
-    destfile = "data/covid19_data.zip"
+    url      = "https://coronadatascraper.com/timeseries.csv",
+    destfile = "data/covid19_timeseries.csv"
   )
   
   data_path <- "COVID-19-master/csse_covid_19_data/csse_covid_19_time_series/"

@@ -3,10 +3,10 @@ body_overview <- dashboardBody(
     tags$style(type = "text/css", "#overview_map {height: 48vh !important;}"),
     tags$style(type = 'text/css', ".slider-animate-button { font-size: 20pt !important; }"),
     tags$style(type = 'text/css', ".slider-animate-container { text-align: left !important; }"),
-    tags$style(type = "text/css", "@media (max-width: 991px) { .details { display: flex; flex-direction: column; } }"),
-    tags$style(type = "text/css", "@media (max-width: 991px) { .details .map { order: 1; width: 100%; } }"),
-    tags$style(type = "text/css", "@media (max-width: 991px) { .details .summary { order: 3; width: 100%; } }"),
-    tags$style(type = "text/css", "@media (max-width: 991px) { .details .slider { order: 2; width: 100%; } }")
+    tags$style(type = "text/css", "@media (max-width: 768px) { .details { display: flex; flex-direction: column; } }"),
+    tags$style(type = "text/css", "@media (max-width: 768px) { .details .map { order: 1; width: 100%; } }"),
+    tags$style(type = "text/css", "@media (max-width: 768px) { .details .summary { order: 3; width: 100%; } }"),
+    tags$style(type = "text/css", "@media (max-width: 768px) { .details .slider { order: 2; width: 100%; } }")
   ),
   fluidRow(
     fluidRow(
