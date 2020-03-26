@@ -59,11 +59,11 @@ getDataByCountry <- function(countries, normalizeByPopulation) {
       var == "recovered" &
       value > 0) %>%
     group_by(`Country/Region`, date, population) %>%
-    summarise("Recovered" = sum(value, na.rm = T)) %>%
+    summarise("Estimated Recoveries" = sum(value, na.rm = T)) %>%
     arrange(date)
   if (nrow(data_recovered) > 0) {
     data_recovered <- data_recovered %>%
-      mutate(Recovered = if_else(normalizeByPopulation, round(Recovered / population * 100000, 2), Recovered))
+      mutate(`Estimated Recoveries` = if_else(normalizeByPopulation, round(`Estimated Recoveries` / population * 100000, 2), `Estimated Recoveries`))
   }
   data_recovered <- data_recovered %>% as.data.frame()
 
@@ -94,14 +94,14 @@ output$case_evolution_byCountry <- renderPlotly({
   req(nrow(data$confirmed) > 0)
   p <- plot_ly(data = data$confirmed, x = ~date, y = ~Confirmed, color = ~`Country/Region`, type = 'scatter', mode = 'lines',
     legendgroup     = ~`Country/Region`) %>%
-    add_trace(data = data$recovered, x = ~date, y = ~Recovered, color = ~`Country/Region`, line = list(dash = 'dash'),
+    add_trace(data = data$recovered, x = ~date, y = ~`Estimated Recoveries`, color = ~`Country/Region`, line = list(dash = 'dash'),
       legendgroup  = ~`Country/Region`, showlegend = FALSE) %>%
     add_trace(data = data$deceased, x = ~date, y = ~Deceased, color = ~`Country/Region`, line = list(dash = 'dot'),
       legendgroup  = ~`Country/Region`, showlegend = FALSE) %>%
     add_trace(data = data$confirmed[which(data$confirmed$`Country/Region` == input$caseEvolution_country[1]),],
       x            = ~date, y = -100, line = list(color = 'rgb(0, 0, 0)'), legendgroup = 'helper', name = "Confirmed") %>%
     add_trace(data = data$confirmed[which(data$confirmed$`Country/Region` == input$caseEvolution_country[1]),],
-      x            = ~date, y = -100, line = list(color = 'rgb(0, 0, 0)', dash = 'dash'), legendgroup = 'helper', name = "Recovered") %>%
+      x            = ~date, y = -100, line = list(color = 'rgb(0, 0, 0)', dash = 'dash'), legendgroup = 'helper', name = "Estimated Recoveries") %>%
     add_trace(data = data$confirmed[which(data$confirmed$`Country/Region` == input$caseEvolution_country[1]),],
       x            = ~date, y = -100, line = list(color = 'rgb(0, 0, 0)', dash = 'dot'), legendgroup = 'helper', name = "Deceased") %>%
     layout(
@@ -212,8 +212,8 @@ output$box_caseEvolution <- renderUI({
           width = 3,
         ),
         column(
-          HTML("Note: Active cases are calculated as <i>Confirmed - (Recovered + Deceased)</i>. Therefore, <i>new</i> active cases can
-          be negative for some days, if on this day there were more new recovered + deceased cases than there were new
+          HTML("Note: Active cases are calculated as <i>Confirmed - (Estimated Recoveries + Deceased)</i>. Therefore, <i>new</i> active cases can
+          be negative for some days, if on this day there were more new estimated recoveries + deceased cases than there were new
           confirmed cases."),
           width = 7
         ),

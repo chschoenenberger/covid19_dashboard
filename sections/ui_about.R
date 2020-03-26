@@ -34,9 +34,10 @@ body_about <- dashboardBody(
               tags$li(tags$b("Population data:"), tags$a(href = "https://data.worldbank.org/indicator/SP.POP.TOTL",
                 "The World Bank"), "& Wikipedia for countries which are not in World Bank data set.")
             ),
-            HTML("<b>Note</b>: Johns Hopkins is currently not updating their data on recovered cases. Therefore, this data
-            might not be correct. Furthermore, state specific information for the US is currently not available from
-            their data."),
+            HTML("<b>Note</b>: Johns Hopkins is not updating their data on recovered cases anymore. Therefore, this data
+            is estimated as <i>(Confirmed at current date - 14 days) - deceased at current date)</i>. Furthermore,
+            state specific information for the US is currently not available from their data. I am currently working
+            on getting a new data source with more reliable data."),
             h3("Bugs, Issues & Enhancement Requests"),
             "If you find any bug / issue or have an idea how to improve the dashboard,
             please create an issue on ", tags$a(href = "https://github.com/chschoenenberger/covid19_dashboard/issues",

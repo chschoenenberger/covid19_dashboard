@@ -6,7 +6,7 @@ addLabel <- function(data) {
     <table style="width:120px;">
     <tr><td>Confirmed:</td><td align="right">', data$confirmed, '</td></tr>
     <tr><td>Deceased:</td><td align="right">', data$deceased, '</td></tr>
-    <tr><td>Recovered:</td><td align="right">', data$recovered, '</td></tr>
+    <tr><td>Estimated Recoveries:</td><td align="right">', data$recovered, '</td></tr>
     <tr><td>Active:</td><td align="right">', data$active, '</td></tr>
     </table>'
   )
@@ -23,10 +23,10 @@ map <- leaflet(addLabel(data_latest)) %>%
   addProviderTiles(providers$HERE.satelliteDay, group = "Satellite") %>%
   addLayersControl(
     baseGroups    = c("Light", "Satellite"),
-    overlayGroups = c("Confirmed", "Confirmed (per capita)", "Recovered", "Deceased", "Active", "Active (per capita)")
+    overlayGroups = c("Confirmed", "Confirmed (per capita)", "Estimated Recoveries", "Deceased", "Active", "Active (per capita)")
   ) %>%
   hideGroup("Confirmed (per capita)") %>%
-  hideGroup("Recovered") %>%
+  hideGroup("Estimated Recoveries") %>%
   hideGroup("Deceased") %>%
   hideGroup("Active") %>%
   hideGroup("Active (per capita)") %>%
@@ -76,7 +76,7 @@ observe({
       fillOpacity  = 0.5,
       label        = ~label,
       labelOptions = labelOptions(textsize = 15),
-      group        = "Recovered"
+      group = "Estimated Recoveries"
     ) %>%
     addCircleMarkers(
       lng          = ~Long,
