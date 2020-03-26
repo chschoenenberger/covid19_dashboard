@@ -172,7 +172,7 @@ output$case_evolution_after100 <- renderPlotly({
   req(!is.null(input$checkbox_per100kEvolutionCountry100th), input$caseEvolution_var100th)
   data <- data_evolution %>%
     arrange(date) %>%
-    filter(if (input$caseEvolution_var100th == "confirmed") (value >= 100 & var == "confirmed") else (value >= 1 & var == "deceased")) %>%
+    filter(if (input$caseEvolution_var100th == "confirmed") (value >= 100 & var == "confirmed") else (value >= 10 & var == "deceased")) %>%
     group_by(`Country/Region`, population, date) %>%
     filter(if (is.null(input$caseEvolution_countryAfter100th)) TRUE else `Country/Region` %in% input$caseEvolution_countryAfter100th) %>%
     summarise(value = sum(value, na.rm = T)) %>%
@@ -193,7 +193,7 @@ output$case_evolution_after100 <- renderPlotly({
   } else {
     p <- layout(p,
       yaxis = list(title = "# Deceased cases"),
-      xaxis = list(title = "# Days since first deceased case")
+      xaxis = list(title = "# Days since 10th deceased case")
     )
   }
   if (input$checkbox_logCaseEvolution100th) {
@@ -254,7 +254,7 @@ output$box_caseEvolution <- renderUI({
         width = 6
       ),
       box(
-        title = "Evolution of Cases since 100th case",
+        title = "Evolution of Cases since 10th/100th case",
         plotlyOutput("case_evolution_after100"),
         fluidRow(
           column(
