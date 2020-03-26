@@ -159,12 +159,20 @@ output$selectize_casesByCountriesAfter100th <- renderUI({
   )
 })
 
-output$case_evolution_after100 <- renderPlotly({
-  req(!is.null(input$checkbox_per100kEvolutionCountry100th))
+output$selectize_casesSince100th <- renderUI({
+  selectizeInput(
+    "caseEvolution_var100th",
+    label    = "Select Variable",
+    choices  = list("Confirmed" = "confirmed", "Deceased" = "deceased"),
+    multiple = FALSE
+  )
+})
 
+output$case_evolution_after100 <- renderPlotly({
+  req(!is.null(input$checkbox_per100kEvolutionCountry100th), input$caseEvolution_var100th)
   data <- data_evolution %>%
     arrange(date) %>%
-    filter(value >= 100 & var == "confirmed") %>%
+    filter(if (input$caseEvolution_var100th == "confirmed") (value >= 100 & var == "confirmed") else (value >= 1 & var == "deceased")) %>%
     group_by(`Country/Region`, population, date) %>%
     filter(if (is.null(input$caseEvolution_countryAfter100th)) TRUE else `Country/Region` %in% input$caseEvolution_countryAfter100th) %>%
     summarise(value = sum(value, na.rm = T)) %>%
@@ -175,12 +183,19 @@ output$case_evolution_after100 <- renderPlotly({
     data$value <- data$value / data$population * 100000
   }
 
-  p <- plot_ly(data = data, x = ~daysSince, y = ~value, color = ~`Country/Region`, type = 'scatter', mode = 'lines') %>%
-    layout(
-      yaxis = list(title = "# Cases"),
-      xaxis = list(title = "# Days since 100th case")
-    )
+  p <- plot_ly(data = data, x = ~daysSince, y = ~value, color = ~`Country/Region`, type = 'scatter', mode = 'lines')
 
+  if (input$caseEvolution_var100th == "confirmed") {
+    p <- layout(p,
+      yaxis = list(title = "# Confirmed cases"),
+      xaxis = list(title = "# Days since 100th confirmed case")
+    )
+  } else {
+    p <- layout(p,
+      yaxis = list(title = "# Deceased cases"),
+      xaxis = list(title = "# Days since first deceased case")
+    )
+  }
   if (input$checkbox_logCaseEvolution100th) {
     p <- layout(p, yaxis = list(type = "log"))
   }
@@ -245,6 +260,10 @@ output$box_caseEvolution <- renderUI({
           column(
             uiOutput("selectize_casesByCountriesAfter100th"),
             width = 3,
+          ),
+          column(
+            uiOutput("selectize_casesSince100th"),
+            width = 3
           ),
           column(
             checkboxInput("checkbox_logCaseEvolution100th", label = "Logarithmic Y-Axis", value = FALSE),
