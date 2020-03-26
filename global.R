@@ -126,3 +126,21 @@ top5_countries <- data_evolution %>%
   top_n(5) %>%
   select(`Country/Region`) %>%
   pull()
+
+data_evolution_new <- read_csv("data/covid19_timeseries.csv",
+  col_types = cols(
+    county = col_character(),
+    city   = col_character()
+  )
+)
+
+distincCountries <- data_evolution_new %>% select(country) %>% distinct() %>% arrange(country) %>% pull()
+for (eachCountry in distincCountries) {
+  states <- data_evolution_new %>% filter(country == eachCountry) %>% select(state) %>% distinct() %>% pull()
+  # print(paste(eachCountry, paste(states, collapse = ", ")))
+  # print("***********************************")
+  hasStates <- !all(sapply(states, is.na))
+  if (hasStates) {
+    print(paste("Country ", eachCountry, "has states:", hasStates))
+  }
+}
