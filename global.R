@@ -16,10 +16,10 @@ downloadGithubData <- function() {
     destfile = "data/covid19_data.zip"
   )
   
-  data_path <- "COVID-19-master/csse_covid_19_data/csse_covid_19_time_series/"
+  data_path <- "COVID-19-master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_"
   unzip(
     zipfile   = "data/covid19_data.zip",
-    files     = paste0(data_path, c("time_series_covid19_confirmed_global.csv", "time_series_covid19_deaths_global.csv", "time_series_19-covid-Recovered.csv")),
+    files     = paste0(data_path, c("confirmed_global.csv", "deaths_global.csv", "recovered_global.csv")),
     exdir     = "data",
     junkpaths = T
   )
@@ -42,7 +42,7 @@ updateData()
 # TODO: Still throws a warning but works for now
 data_confirmed <- read_csv("data/time_series_covid19_confirmed_global.csv")
 data_deceased  <- read_csv("data/time_series_covid19_deaths_global.csv")
-data_recovered <- read_csv("data/time_series_19-covid-Recovered.csv")
+# data_recovered <- read_csv("data/time_series_covid19_recovered_global.csv")
 
 # Get latest data
 current_date <- as.Date(names(data_confirmed)[ncol(data_confirmed)], format = "%m/%d/%y")
@@ -54,42 +54,35 @@ data_confirmed_sub <- data_confirmed %>%
   group_by(`Province/State`, `Country/Region`, date, Lat, Long) %>%
   summarise("confirmed" = sum(value, na.rm = T))
 
-data_recovered_sub <- data_recovered %>%
-  pivot_longer(names_to = "date", cols = 5:ncol(data_recovered)) %>%
-  group_by(`Province/State`, `Country/Region`, date, Lat, Long) %>%
-  summarise("recovered" = sum(value, na.rm = T))
+# data_recovered_sub <- data_recovered %>%
+#   pivot_longer(names_to = "date", cols = 5:ncol(data_recovered)) %>%
+#   group_by(`Province/State`, `Country/Region`, date, Lat, Long) %>%
+#   summarise("recovered" = sum(value, na.rm = T))
 
 data_deceased_sub <- data_deceased %>%
   pivot_longer(names_to = "date", cols = 5:ncol(data_deceased)) %>%
   group_by(`Province/State`, `Country/Region`, date, Lat, Long) %>%
   summarise("deceased" = sum(value, na.rm = T))
 
-data_evolution      <- data_confirmed_sub %>%
-  full_join(data_recovered_sub) %>%
+data_evolution <- data_confirmed_sub %>%
   full_join(data_deceased_sub) %>%
-  mutate(active = (confirmed - recovered - deceased)) %>%
+  ungroup() %>%
+  mutate(date = as.Date(date, "%m/%d/%y")) %>%
+  arrange(date) %>%
+  group_by(`Province/State`, `Country/Region`, Lat, Long) %>%
+  mutate(
+    recovered = lag(confirmed, 14, default = 0) - deceased,
+    recovered = ifelse(recovered > 0, recovered, 0),
+    active = confirmed - recovered - deceased
+  ) %>%
   pivot_longer(names_to = "var", cols = c(confirmed, recovered, deceased, active)) %>%
   ungroup()
-data_evolution$date <- as.Date(data_evolution$date, "%m/%d/%y")
 
 # Calculating new cases
 data_evolution <- data_evolution %>%
-  arrange(date) %>%
-  group_by(`Province/State`, `Country/Region`, var) %>%
-  fill(value) %>%
-  ungroup() %>%
   group_by(`Province/State`, `Country/Region`) %>%
   mutate(value_new = value - lag(value, 4, default = 0)) %>%
   ungroup()
-
-data_atDate <- function(inputDate) {
-  data_evolution[which(data_evolution$date == inputDate),] %>%
-    pivot_wider(id_cols = c("Province/State", "Country/Region", "date", "Lat", "Long", "population"), names_from = var, values_from = value) %>%
-    filter(confirmed > 0 |
-      recovered > 0 |
-      deceased > 0 |
-      active > 0)
-}
 
 rm(data_confirmed, data_confirmed_sub, data_recovered, data_recovered_sub, data_deceased, data_deceased_sub)
 
@@ -115,6 +108,16 @@ population      <- bind_rows(population, noDataCountries)
 data_evolution <- data_evolution %>%
   left_join(population, by = c("Country/Region" = "country"))
 rm(population, countryNamesPop, countryNamesDat, noDataCountries)
+
+data_atDate <- function(inputDate) {
+  data_evolution[which(data_evolution$date == inputDate),] %>%
+    distinct() %>%
+    pivot_wider(id_cols = c("Province/State", "Country/Region", "date", "Lat", "Long", "population"), names_from = var, values_from = value) %>%
+    filter(confirmed > 0 |
+             recovered > 0 |
+             deceased > 0 |
+             active > 0)
+}
 
 data_latest <- data_atDate(max(data_evolution$date))
 
