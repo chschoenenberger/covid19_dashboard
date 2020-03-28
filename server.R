@@ -3,7 +3,7 @@ server <- function(input, output) {
 
   showNotification("Attention: Johns Hopkins University does not provide recovered cases anymore. Therefore,
   recovered cases are an estimation only. Please check the about section for more information.",
-    duration = NULL, type = "error")
+    duration = 30, type = "error")
 
   # Trigger once an hour
   dataLoadingTrigger <- reactiveTimer(3600000)
