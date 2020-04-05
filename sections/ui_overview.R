@@ -1,6 +1,6 @@
 body_overview <- dashboardBody(
   tags$head(
-    tags$style(type = "text/css", "#overview_map {height: 48vh !important;}"),
+    tags$style(type = "text/css", "#overview_map {height: 50vh !important;}"),
     tags$style(type = 'text/css', ".slider-animate-button { font-size: 20pt !important; }"),
     tags$style(type = 'text/css', ".slider-animate-container { text-align: left !important; }"),
     tags$style(type = "text/css", "@media (max-width: 991px) { .details { display: flex; flex-direction: column; } }"),
