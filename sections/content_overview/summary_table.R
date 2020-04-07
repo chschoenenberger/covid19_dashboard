@@ -1,16 +1,16 @@
 output$summaryTables <- renderUI({
   tabBox(
-    tabPanel("Country/Region",
+    tabPanel("Provinces",
       div(
         dataTableOutput("summaryDT_country"),
         style = "margin-top: -10px")
     ),
-    tabPanel("Province/State",
-      div(
-        dataTableOutput("summaryDT_state"),
-        style = "margin-top: -10px"
-      )
-    ),
+    #tabPanel("NONE",
+             #div(
+        #dataTableOutput("summaryDT_state"),
+        #style = "margin-top: -10px"
+        #  )
+    #),
     width = 12
   )
 })
@@ -55,15 +55,18 @@ observeEvent(input$summaryDT_state_row_last_clicked, {
 })
 
 summariseData <- function(df, groupBy) {
-  df %>%
+  x<- df %>%
     group_by(!!sym(groupBy)) %>%
     summarise(
       "Confirmed"            = sum(confirmed, na.rm = T),
-      "Estimated Recoveries" = sum(recovered, na.rm = T),
+      "Recoveries" = sum(recovered, na.rm = T),
       "Deceased"             = sum(deceased, na.rm = T),
       "Active"               = sum(active, na.rm = T)
-    ) %>%
-    as.data.frame()
+    );
+  if("Country/Region" %in% colnames(x)) {
+    x <- rename(x, "Province" = "Country/Region");
+  }
+  x %>% as.data.frame()
 }
 
 getSummaryDT <- function(data, groupBy, selectable = FALSE) {

@@ -5,49 +5,43 @@ body_about <- dashboardBody(
         box(
           title = div("About this project", style = "padding-left: 20px", class = "h2"),
           column(
-            "This dashboard shows recent developments of the COVID-19 pandemic. The latest
-            open data on the COVID-19 spread are regularly downloaded and displayed in
-            a map, summary tables, key figures and plots.",
+            "This dashbord is based on", tags$a(href = "https://github.com/chschoenenberger/covid19_dashboard", "covid19_dashboard"), 
+            "(by Christoph Schoenenberger), an open source project to show the developments of COVID-19 pandemic.",
+            tags$br(),
+            tags$b("Disclaimer"), "The project is for visualization and learning purposes. The author is not epidemiologist or health expert.
+            The project is still in adaptation mode and many constants refear to the original version ('Contries' instead of 'Provinces' appear around)",
             tags$br(),
             h3("Motivation"),
-            "Various companies thought that a global crisis is an excellent opportunity to
-            show case their technologies. Therefore, my idea was to show that open-source
-            technologies, such as R Shiny, can be used to create a decent dashboard in few hours.
-            Furthermore, the most popular COVID-19 dashboard (",
-            tags$a(href = "https://coronavirus.jhu.edu/map.html", "Johns Hopkins COVID-19"), ") is styled rather
-            alarmist. Therefore, a more neutral dashboard might help to dampen the already
-            existing hysteria a little.",
-            h4("Why Open Source?"),
-            "My hope is that this dashboard can help researchers around the world to get a
-            better overview of the current situation concerning the COVID-19 idea. I hereby
-            invite all of you to contribute to this project with additional visualizations,
-            information etc.",
+            "My idea was to show COVID-19 development on Argentina.
+             Also I think that", tags$b("geographical and time"), "are keys on pandemic evolution dataviz.",
+            tags$br(),
+            "I found a cute open source project and adapted to be feed on by the data source I created.",
             tags$br(),
             tags$br(),
-            "Find more thoughts on this dashboard from Christoph Schoenenberger in this",
-            tags$a(href = "https://medium.com/@ch.schoenenberger/covid-19-open-source-dashboard-fa1d2b4cd985",
-              "Medium article"), ".",
             h3("Data"),
             tags$ul(
-              tags$li(tags$b("COVID-19 data:"), tags$a(href = "https://github.com/CSSEGISandData/COVID-19",
-                "Johns Hopkins CSSE")),
-              tags$li(tags$b("Population data:"), tags$a(href = "https://data.worldbank.org/indicator/SP.POP.TOTL",
-                "The World Bank"), "& Wikipedia for countries which are not in World Bank data set.")
+              tags$li(tags$b("Repo argcovidapi:"), tags$a(href = "https://github.com/mariano22/argcovidapi/",
+                "argcovidapi")),
+              tags$li(tags$b("Population data:"), "& Wikipedia (censo")
             ),
-            HTML("<b>Note</b>: Johns Hopkins is not updating their data on recovered cases anymore. Therefore, this data
-            is estimated as <i>(Confirmed at current date - 14 days) - deceased at current date)</i>. Furthermore,
-            state specific information for the US is currently not available from their data. I am currently working
-            on getting a new data source with more reliable data."),
             h3("Bugs, Issues & Enhancement Requests"),
             "If you find any bug / issue or have an idea how to improve the dashboard,
-            please create an issue on ", tags$a(href = "https://github.com/chschoenenberger/covid19_dashboard/issues",
+            please create an issue on ", tags$a(href = "https://github.com/mariano22/covid19_dashboard/issues",
               "Github"), ". I will try to look into it as soon as possible.",
             h3("Contribute"),
             "If you want to add any visualization or further information feel free to create
-            a pull request on ", tags$a(href = "https://github.com/chschoenenberger/covid19_dashboard", "Github"), ".
+            a pull request on ", tags$a(href = "https://github.com/mariano22/covid19_dashboard", "Github"), ".
             For major rework either fork the repository or create an issue so we can discuss it.",
             h3("Developers"),
-            "Christoph Schoenenberger | Data Scientist @",
+            
+            "Mariano Crosetti | Computer Scientist student @",
+            tags$a(href = "https://www.facebook.com/mariano.crosetti.3", "Facebook"), "|",
+            tags$a(href = "https://www.linkedin.com/in/mariano-crosetti-0b71a4146/", "LinkedIn"), "|",
+            tags$a(href = "https://twitter.com/MarianoCrosetti", "Twitter"), "|",
+            tags$a(href = "https://github.com/mariano22/", "Github"),
+            tags$br(),
+            tags$br(),
+            "Christoph Schoenenberger (original repo) | Data Scientist @",
             tags$a(href = "https://www.zuehlke.com/ch/en/", "Zuehlke Engineering"), "|",
             tags$a(href = "https://www.linkedin.com/in/cschonenberger/", "LinkedIn"), "|",
             tags$a(href = "https://twitter.com/ChSchonenberger", "Twitter"), "|",

@@ -26,7 +26,7 @@ key_figures <- reactive({
     "confirmed" = HTML(paste(format(data$confirmed, big.mark = " "), sprintf("<h4>(%+.1f %%)</h4>", data_new$new_confirmed))),
     "recovered" = HTML(paste(format(data$recovered, big.mark = " "), sprintf("<h4>(%+.1f %%)</h4>", data_new$new_recovered))),
     "deceased"  = HTML(paste(format(data$deceased, big.mark = " "), sprintf("<h4>(%+.1f %%)</h4>", data_new$new_deceased))),
-    "countries" = HTML(paste(format(data$countries, big.mark = " "), "/ 195", sprintf("<h4>(%+d)</h4>", data_new$new_countries)))
+    "countries" = HTML(paste(format(data$countries, big.mark = " "), "/ 23", sprintf("<h4>(%+d)</h4>", data_new$new_countries)))
   )
   return(keyFigures)
 })
@@ -45,7 +45,7 @@ output$valueBox_confirmed <- renderValueBox({
 output$valueBox_recovered <- renderValueBox({
   valueBox(
     key_figures()$recovered,
-    subtitle = "Estimated Recoveries",
+    subtitle = "Recoveries",
     icon     = icon("heart"),
     color    = "light-blue"
   )
@@ -63,7 +63,7 @@ output$valueBox_deceased <- renderValueBox({
 output$valueBox_countries <- renderValueBox({
   valueBox(
     key_figures()$countries,
-    subtitle = "Affected Countries",
+    subtitle = "Affected Provinces",
     icon     = icon("flag"),
     color    = "light-blue"
   )
