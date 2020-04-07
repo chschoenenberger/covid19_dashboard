@@ -7,7 +7,7 @@ The project is still in adaptation mode and many constants refear to the origina
 
 ## Motivation
 My idea was to show COVID-19 development on Argentina.
-Also I think that geographical and *time are keys* on pandemic evolution dataviz.
+Also I think that geographical and **time are keys** on pandemic evolution dataviz.
 I found a cute open source project and adapted to be feed on by the data source I created.
 
 ## License
