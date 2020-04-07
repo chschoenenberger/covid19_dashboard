@@ -1,5 +1,5 @@
 # COVID-19 Dashboard 
-This dashbord is based on, [covid19_dashboard]("https://github.com/chschoenenberger/covid19_dashboard)
+This dashbord is based on, [covid19_dashboard](https://github.com/chschoenenberger/covid19_dashboard)
 (by Christoph Schoenenberger), an open source project to show the developments of COVID-19 pandemic.
 
 **Disclaimer:** The project is for visualization and learning purposes. The author is not epidemiologist or health expert.
