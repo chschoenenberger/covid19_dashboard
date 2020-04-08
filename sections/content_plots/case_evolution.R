@@ -206,6 +206,54 @@ output$case_evolution_after100 <- renderPlotly({
   return(p)
 })
 
+output$selectize_doublingTime_Country <- renderUI({
+  selectizeInput(
+    "selectize_doublingTime_Country",
+    label    = "Select Countries",
+    choices  = unique(data_evolution$`Country/Region`),
+    selected = top5_countries,
+    multiple = TRUE
+  )
+})
+
+output$selectize_doublingTime_Variable <- renderUI({
+  selectizeInput(
+    "selectize_doublingTime_Variable",
+    label    = "Select Variable",
+    choices  = list("Confirmed" = "doublingTimeConfirmed", "Deceased" = "doublingTimeDeceased"),
+    multiple = FALSE
+  )
+})
+
+output$plot_doublingTime <- renderPlotly({
+  req(input$selectize_doublingTime_Country, input$selectize_doublingTime_Variable)
+  daysGrowthRate <- 5
+  data           <- data_evolution %>%
+    pivot_wider(id_cols = c(`Province/State`, `Country/Region`, date, Lat, Long), names_from = var, values_from = value) %>%
+    filter(if (input$selectize_doublingTime_Variable == "doublingTimeConfirmed") (confirmed >= 100) else (deceased >= 10)) %>%
+    filter(if (is.null(input$selectize_doublingTime_Country)) TRUE else `Country/Region` %in% input$selectize_doublingTime_Country) %>%
+    group_by(`Country/Region`, date) %>%
+    select(-recovered, -active) %>%
+    summarise(
+      confirmed = sum(confirmed, na.rm = T),
+      deceased  = sum(deceased, na.rm = T)
+    ) %>%
+    arrange(date) %>%
+    mutate(
+      doublingTimeConfirmed = log(2) / log(1 + (((confirmed - lag(confirmed, daysGrowthRate)) / lag(confirmed, daysGrowthRate)) / daysGrowthRate)),
+      doublingTimeDeceased  = log(2) / log(1 + (((deceased - lag(deceased, daysGrowthRate)) / lag(deceased, daysGrowthRate)) / daysGrowthRate)),
+    ) %>%
+    filter(!is.na(doublingTimeConfirmed) | !is.na(doublingTimeDeceased))
+
+  p <- plot_ly(data = data, x = ~date, y = data[[input$selectize_doublingTime_Variable]], color = ~`Country/Region`, type = 'scatter', mode = 'lines') %>%
+    layout(
+      yaxis = list(title = "Doubline Time in Days"),
+      xaxis = list(title = "Date")
+    )
+
+  return(p)
+})
+
 output$box_caseEvolution <- renderUI({
   tagList(
     fluidRow(
@@ -273,6 +321,28 @@ output$box_caseEvolution <- renderUI({
           )
         ),
         width = 6
+      )
+    ),
+    fluidRow(
+      box(
+        title = "Evolution of Doubling Times per Country",
+        plotlyOutput("plot_doublingTime"),
+        fluidRow(
+          column(
+            uiOutput("selectize_doublingTime_Country"),
+            width = 3,
+          ),
+          column(
+            uiOutput("selectize_doublingTime_Variable"),
+            width = 3,
+          ),
+          column(width = 3),
+          column(
+            div("Note: The doubling time is calculated based on the growth rate over the last five days.",
+              style = "padding-top: 15px;"),
+            width = 3
+          )
+        )
       )
     )
   )
