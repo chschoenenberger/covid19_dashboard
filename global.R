@@ -9,17 +9,18 @@ library("fs")
 library("wbstats")
 
 source("utils.R", local = T)
-# TODO:
+
+DATA_ZIP_PATH <- "data/argcovidapi.zip"
+
 downloadGithubData <- function() {
   download.file(
-    url      = "https://github.com/CSSEGISandData/COVID-19/archive/master.zip",
-    destfile = "data/covid19_data.zip"
+    url      = "https://github.com/mariano22/argcovidapi/archive/master.zip",
+    destfile = DATA_ZIP_PATH
   )
 
-  data_path <- "COVID-19-master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_"
   unzip(
-    zipfile   = "data/covid19_data.zip",
-    files     = paste0(data_path, c("confirmed_global.csv", "deaths_global.csv", "recovered_global.csv", "confirmed_US.csv", "deaths_US.csv")),
+    zipfile   = DATA_ZIP_PATH,
+    files     = c("argcovidapi-master/csvs/SantaFe_AllData.csv", "argcovidapi-master/csvs/Argentina_Provinces.csv"),
     exdir     = "data",
     junkpaths = T
   )
@@ -27,22 +28,19 @@ downloadGithubData <- function() {
 
 
 updateData <- function() {
-  # TODO: updateData is dummy for now
-  if (FALSE) {
-    # Download data from Johns Hopkins (https://github.com/CSSEGISandData/COVID-19) if the data is older than 0.5h
+    # Download data from argcovidapi (https://github.com/mariano22/argcovidapi) if the data is older than 0.5h
     if (!dir_exists("data")) {
       dir.create('data')
       downloadGithubData()
-    } else if ((!file.exists("data/covid19_data.zip")) || (as.double(Sys.time() - file_info("data/covid19_data.zip")$change_time, units = "hours") > 0.5)) {
+    } else if ((!file.exists(DATA_ZIP_PATH)) || (as.double(Sys.time() - file_info(DATA_ZIP_PATH)$change_time, units = "hours") > 0.5)) {
       downloadGithubData()
     }
-  }
 }
 
-# TODO: Update with start of app
+# Update with start of app
 updateData()
-# TODO: Get last update data day and time
-changed_date <- file_info("data/covid19_data_mariano22.zip")$change_time
+# Get last update data day and time
+changed_date <- file_info(DATA_ZIP_PATH)$change_time
 
 
 
