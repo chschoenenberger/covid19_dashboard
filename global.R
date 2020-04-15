@@ -9,13 +9,13 @@ library("fs")
 library("wbstats")
 
 source("utils.R", local = T)
-# TODO: 
+# TODO:
 downloadGithubData <- function() {
   download.file(
     url      = "https://github.com/CSSEGISandData/COVID-19/archive/master.zip",
     destfile = "data/covid19_data.zip"
   )
-  
+
   data_path <- "COVID-19-master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_"
   unzip(
     zipfile   = "data/covid19_data.zip",
@@ -53,7 +53,7 @@ raw_data_covid <- read_csv("data/Argentina_Provinces.csv")
 # Get latest day
 current_date <- as.Date(paste(names(raw_data_covid)[ncol(raw_data_covid)],'/2020',sep=''), format = "%d/%m/%y")
 
-# Format data: 
+# Format data:
 data_covid <- raw_data_covid %>%
   pivot_longer(names_to='date', 3:ncol(.)) %>%
   mutate(date = paste(date,'/2020',sep='')) %>%
@@ -80,7 +80,7 @@ data_atDate <- function(inputDate) {
               deceased > 0 |
               active > 0);
   x
-   
+
 }
 
 data_latest <- data_atDate(max(data_evolution$date))
