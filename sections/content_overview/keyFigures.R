@@ -11,14 +11,22 @@ sumData <- function(date) {
   return(NULL)
 }
 
+augment_percentage <- function(x0,x1) {
+  if (!is.null(x0) && x0>0)
+    return((x1-x0)/x0*100)
+  if (!is.null(x1) && x1>0)
+    return(Inf)
+  return(0)
+}
+
 key_figures <- reactive({
   data           <- sumData(input$timeSlider)
   data_yesterday <- sumData(input$timeSlider - 1)
 
   data_new <- list(
-    new_confirmed = (data$confirmed - data_yesterday$confirmed) / data_yesterday$confirmed * 100,
-    new_recovered = (data$recovered - data_yesterday$recovered) / data_yesterday$recovered * 100,
-    new_deceased  = (data$deceased - data_yesterday$deceased) / data_yesterday$deceased * 100,
+    new_confirmed = augment_percentage(data_yesterday$confirmed, data$confirmed),
+    new_recovered = augment_percentage(data_yesterday$recovered, data$recovered),
+    new_deceased  = augment_percentage(data_yesterday$deceased, data$deceased),
     new_countries = data$countries - data_yesterday$countries
   )
 
