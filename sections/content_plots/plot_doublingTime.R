@@ -19,7 +19,7 @@ output$selectize_doublingTime_Variable <- renderUI({
 
 output$plot_doublingTime <- renderPlotly({
   req(input$selectize_doublingTime_Country, input$selectize_doublingTime_Variable)
-  daysGrowthRate <- 5
+  daysGrowthRate <- 7
   data           <- data_evolution %>%
     pivot_wider(id_cols = c(`Province/State`, `Country/Region`, date, Lat, Long), names_from = var, values_from = value) %>%
     filter(if (input$selectize_doublingTime_Variable == "doublingTimeConfirmed") (confirmed >= 100) else (deceased >= 10)) %>%

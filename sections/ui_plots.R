@@ -83,7 +83,7 @@ body_plots <- dashboardBody(
             ),
             column(width = 3),
             column(
-              div("Note: The doubling time is calculated based on the growth rate over the last five days.",
+              div("Note: The doubling time is calculated based on the growth rate over the last seven days.",
                 style = "padding-top: 15px;"),
               width = 3
             )
