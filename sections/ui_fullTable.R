@@ -18,14 +18,14 @@ body_fullTable <- dashboardBody(
   ),
   fluidPage(
     fluidRow(
-      h3(paste0("Complete Table (", strftime(current_date, format = "%d.%m.%Y"), ")"),
-        class = "box-title", style = "margin-top: 10px; font-size: 18px;"),
+      h3(paste0("República Argentina"),
+        class = "box-title", style = "margin: 10px; font-size: 18px;"),
       div(
         dataTableOutput("fullTable"),
         class = "full-table"
       ),
       div(
-        tags$h5("Growth Rate Coloring", style = "margin-left: 10px;"),
+        tags$h5("Indicadores por color según nivel de tasa de crecimiento", style = "margin-left: 10px;"),
         tags$ul(class = "legend",
           tags$li(tags$span(class = "pos1"), " 0 % to 10 %"),
           tags$li(tags$span(class = "pos2"), "10 % to 20 %"),
@@ -48,7 +48,7 @@ body_fullTable <- dashboardBody(
 )
 
 page_fullTable <- dashboardPage(
-  title   = "Full Table",
+  title   = "Database",
   header  = dashboardHeader(disable = TRUE),
   sidebar = dashboardSidebar(disable = TRUE),
   body    = body_fullTable

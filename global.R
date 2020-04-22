@@ -20,7 +20,7 @@ downloadGithubData <- function() {
 
   unzip(
     zipfile   = DATA_ZIP_PATH,
-    files     = c("argcovidapi-master/csvs/SantaFe_AllData.csv", "argcovidapi-master/csvs/Argentina_Provinces.csv"),
+    files     = c("argcovidapi-master/csvs/Argentina_Provinces.csv"),
     exdir     = "data",
     junkpaths = T
   )

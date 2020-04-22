@@ -42,9 +42,9 @@ key_figures <- reactive({
 output$valueBox_confirmed <- renderValueBox({
   valueBox(
     key_figures()$confirmed,
-    subtitle = "Confirmed",
-    icon     = icon("file-medical"),
-    color    = "light-blue",
+    subtitle = "Confirmados",
+    icon     = icon("virus"),
+    color    = "navy",
     width    = NULL
   )
 })
@@ -53,32 +53,32 @@ output$valueBox_confirmed <- renderValueBox({
 output$valueBox_recovered <- renderValueBox({
   valueBox(
     key_figures()$recovered,
-    subtitle = "Recoveries",
+    subtitle = "Recuperados",
     icon     = icon("heart"),
-    color    = "light-blue"
+    color    = "green"
   )
 })
 
 output$valueBox_deceased <- renderValueBox({
   valueBox(
     key_figures()$deceased,
-    subtitle = "Deceased",
+    subtitle = "Fallecidos",
     icon     = icon("heartbeat"),
-    color    = "light-blue"
+    color    = "red"
   )
 })
 
 output$valueBox_countries <- renderValueBox({
   valueBox(
     key_figures()$countries,
-    subtitle = "Affected Provinces",
+    subtitle = "Provincias afectadas",
     icon     = icon("flag"),
     color    = "light-blue"
   )
 })
 
 output$box_keyFigures <- renderUI(box(
-  title = paste0("Key Figures (", strftime(input$timeSlider, format = "%d.%m.%Y"), ")"),
+  title = paste0("Indicadores Clave"),
   fluidRow(
     column(
       valueBoxOutput("valueBox_confirmed", width = 3),
@@ -89,6 +89,6 @@ output$box_keyFigures <- renderUI(box(
       style = "margin-left: -20px"
     )
   ),
-  div("Last updated: ", strftime(changed_date, format = "%d.%m.%Y - %R %Z")),
+  div("Última actualización: ", strftime(changed_date, format = "%d.%m.%Y")),
   width = 12
 ))

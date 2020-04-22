@@ -20,21 +20,21 @@ body_overview <- dashboardBody(
           leafletOutput("overview_map")
         ),
         class = "map",
-        width = 8,
+        width = 6,
         style = 'padding:0px;'
       ),
       column(
         uiOutput("summaryTables"),
         class = "summary",
-        width = 4,
+        width = 6,
         style = 'padding:0px;'
       ),
       column(
         sliderInput(
           "timeSlider",
-          label      = "Select date",
+          label      = "Seleccionar fecha",
           min        = min(data_evolution$date),
-          max        = max(data_evolution$date),
+          max        = max(data_evolution$date), 
           value      = max(data_evolution$date),
           width      = "100%",
           timeFormat = "%d.%m.%Y",
@@ -49,7 +49,7 @@ body_overview <- dashboardBody(
 )
 
 page_overview <- dashboardPage(
-  title   = "Overview",
+  title   = "Tablero",
   header  = dashboardHeader(disable = TRUE),
   sidebar = dashboardSidebar(disable = TRUE),
   body    = body_overview

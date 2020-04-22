@@ -1,9 +1,9 @@
 output$summaryTables <- renderUI({
   tabBox(
-    tabPanel("Provinces",
+    tabPanel("Provincias",
       div(
         dataTableOutput("summaryDT_country"),
-        style = "margin-top: -10px")
+        style = "margin-top: 10px")
     ),
     #tabPanel("NONE",
              #div(
@@ -58,13 +58,13 @@ summariseData <- function(df, groupBy) {
   x<- df %>%
     group_by(!!sym(groupBy)) %>%
     summarise(
-      "Confirmed"            = sum(confirmed, na.rm = T),
-      "Recoveries" = sum(recovered, na.rm = T),
-      "Deceased"             = sum(deceased, na.rm = T),
-      "Active"               = sum(active, na.rm = T)
+      "Confirmados"            = sum(confirmed, na.rm = T),
+      "Recuperados" = sum(recovered, na.rm = T),
+      "Fallecidos"             = sum(deceased, na.rm = T),
+      "Activos"               = sum(active, na.rm = T)
     );
   if("Country/Region" %in% colnames(x)) {
-    x <- rename(x, "Province" = "Country/Region");
+    x <- rename(x, "Provincias" = "Country/Region");
   }
   x %>% as.data.frame()
 }

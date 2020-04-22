@@ -15,8 +15,8 @@ output$case_evolution <- renderPlotly({
     type  = 'scatter',
     mode  = 'lines') %>%
     layout(
-      yaxis = list(title = "# Cases"),
-      xaxis = list(title = "Date")
+      yaxis = list(title = "# Casos"),
+      xaxis = list(title = "Fecha")
     )
 
 
@@ -30,7 +30,7 @@ output$case_evolution <- renderPlotly({
 output$selectize_casesByCountries <- renderUI({
   selectizeInput(
     "caseEvolution_country",
-    label    = "Select Countries",
+    label    = "Selecciona Provincias",
     choices  = unique(data_evolution$`Country/Region`),
     selected = top5_countries,
     multiple = TRUE
@@ -105,15 +105,15 @@ output$case_evolution_byCountry <- renderPlotly({
     add_trace(data = data$confirmed[which(data$confirmed$`Country/Region` == input$caseEvolution_country[1]),],
       x            = ~date, y = -100, line = list(color = 'rgb(0, 0, 0)', dash = 'dot'), legendgroup = 'helper', name = "Deceased") %>%
     layout(
-      yaxis = list(title = "# Cases", rangemode = "nonnegative"),
-      xaxis = list(title = "Date")
+      yaxis = list(title = "# Casos", rangemode = "nonnegative"),
+      xaxis = list(title = "Fecha")
     )
 
   if (input$checkbox_logCaseEvolutionCountry) {
     p <- layout(p, yaxis = list(type = "log"))
   }
   if (input$checkbox_per100kEvolutionCountry) {
-    p <- layout(p, yaxis = list(title = "# Cases per 100k Inhabitants"))
+    p <- layout(p, yaxis = list(title = "# Casos cada 100k habitantes"))
   }
 
   return(p)
@@ -122,9 +122,9 @@ output$case_evolution_byCountry <- renderPlotly({
 output$selectize_casesByCountries_new <- renderUI({
   selectizeInput(
     "selectize_casesByCountries_new",
-    label    = "Select Country",
-    choices  = c("All", unique(data_evolution$`Country/Region`)),
-    selected = "All"
+    label    = "Selecciona Provincia",
+    choices  = c("Todas", unique(data_evolution$`Country/Region`)),
+    selected = "Todas"
   )
 })
 
@@ -132,11 +132,11 @@ output$case_evolution_new <- renderPlotly({
   req(input$selectize_casesByCountries_new)
   data <- data_evolution %>%
     mutate(var = sapply(var, capFirst)) %>%
-    filter(if (input$selectize_casesByCountries_new == "All") TRUE else `Country/Region` %in% input$selectize_casesByCountries_new) %>%
+    filter(if (input$selectize_casesByCountries_new == "Todas") TRUE else `Country/Region` %in% input$selectize_casesByCountries_new) %>%
     group_by(date, var, `Country/Region`) %>%
     summarise(new_cases = sum(value_new, na.rm = T))
 
-  if (input$selectize_casesByCountries_new == "All") {
+  if (input$selectize_casesByCountries_new == "Todas") {
     data <- data %>%
       group_by(date, var) %>%
       summarise(new_cases = sum(new_cases, na.rm = T))
@@ -144,15 +144,15 @@ output$case_evolution_new <- renderPlotly({
 
   p <- plot_ly(data = data, x = ~date, y = ~new_cases, color = ~var, type = 'bar') %>%
     layout(
-      yaxis = list(title = "# New Cases"),
-      xaxis = list(title = "Date")
+      yaxis = list(title = "# Nuevos Casos"),
+      xaxis = list(title = "Fecha")
     )
 })
 
 output$selectize_casesByCountriesAfter100th <- renderUI({
   selectizeInput(
     "caseEvolution_countryAfter100th",
-    label    = "Select Countries",
+    label    = "Selecciona Provincias",
     choices  = unique(data_evolution$`Country/Region`),
     selected = top5_countries,
     multiple = TRUE
@@ -162,7 +162,7 @@ output$selectize_casesByCountriesAfter100th <- renderUI({
 output$selectize_casesSince100th <- renderUI({
   selectizeInput(
     "caseEvolution_var100th",
-    label    = "Select Variable",
+    label    = "Selecciona Variable",
     choices  = list("Confirmed" = "confirmed", "Deceased" = "deceased"),
     multiple = FALSE
   )
@@ -187,20 +187,20 @@ output$case_evolution_after100 <- renderPlotly({
 
   if (input$caseEvolution_var100th == "confirmed") {
     p <- layout(p,
-      yaxis = list(title = "# Confirmed cases"),
-      xaxis = list(title = "# Days since 100th confirmed case")
+      yaxis = list(title = "# Casos confirmados"),
+      xaxis = list(title = "# Días desde el caso 100 confirmado")
     )
   } else {
     p <- layout(p,
-      yaxis = list(title = "# Deceased cases"),
-      xaxis = list(title = "# Days since 10th deceased case")
+      yaxis = list(title = "# Fallecidos"),
+      xaxis = list(title = "# Días desde el décimo caso fallecido")
     )
   }
   if (input$checkbox_logCaseEvolution100th) {
     p <- layout(p, yaxis = list(type = "log"))
   }
   if (input$checkbox_per100kEvolutionCountry100th) {
-    p <- layout(p, yaxis = list(title = "# Cases per 100k Inhabitants"))
+    p <- layout(p, yaxis = list(title = "# Casos cada 100 mil habitantes"))
   }
 
   return(p)
@@ -210,26 +210,26 @@ output$box_caseEvolution <- renderUI({
   tagList(
     fluidRow(
       box(
-        title = "Evolution of Cases since Outbreak",
+        title = "Evolución de casos",
         plotlyOutput("case_evolution"),
         column(
-          checkboxInput("checkbox_logCaseEvolution", label = "Logarithmic Y-Axis", value = FALSE),
+          checkboxInput("checkbox_logCaseEvolution", label = "Y-Axis Logaritmico", value = FALSE),
           width = 3,
           style = "float: right; padding: 10px; margin-right: 50px"
         ),
         width = 6
       ),
       box(
-        title = "New cases",
+        title = "Nuevos casos",
         plotlyOutput("case_evolution_new"),
         column(
           uiOutput("selectize_casesByCountries_new"),
           width = 3,
         ),
         column(
-          HTML("Note: Active cases are calculated as <i>Confirmed - (Recoveries + Deceased)</i>. Therefore, <i>new</i> active cases can
-          be negative for some days, if on this day there were more new Recoveries + deceased cases than there were new
-          confirmed cases."),
+          HTML("Nota: Los casos activos se calculan como <i> Confirmado - (Recuperaciones + Fallecido) </i>. 
+               Por lo tanto, <i> nuevos </i> casos activos pueden ser negativo por algunos días, 
+               si en este día hubo más nuevos casos de Recuperación + fallecidos que nuevos casos confirmados."),
           width = 7
         ),
         width = 6
@@ -237,7 +237,7 @@ output$box_caseEvolution <- renderUI({
     ),
     fluidRow(
       box(
-        title = "Cases per Country",
+        title = "Casos por Provincia",
         plotlyOutput("case_evolution_byCountry"),
         fluidRow(
           column(
@@ -245,8 +245,8 @@ output$box_caseEvolution <- renderUI({
             width = 3,
           ),
           column(
-            checkboxInput("checkbox_logCaseEvolutionCountry", label = "Logarithmic Y-Axis", value = FALSE),
-            checkboxInput("checkbox_per100kEvolutionCountry", label = "Per Population", value = FALSE),
+            checkboxInput("checkbox_logCaseEvolutionCountry", label = "Y-Axis Logaritmico", value = FALSE),
+            checkboxInput("checkbox_per100kEvolutionCountry", label = "Por población", value = FALSE),
             width = 3,
             style = "float: right; padding: 10px; margin-right: 50px"
           )
@@ -254,7 +254,7 @@ output$box_caseEvolution <- renderUI({
         width = 6
       ),
       box(
-        title = "Evolution of Cases since 10th/100th case",
+        title = "Evolución de Casos desde 10ª/100º caso",
         plotlyOutput("case_evolution_after100"),
         fluidRow(
           column(
@@ -266,8 +266,8 @@ output$box_caseEvolution <- renderUI({
             width = 3
           ),
           column(
-            checkboxInput("checkbox_logCaseEvolution100th", label = "Logarithmic Y-Axis", value = FALSE),
-            checkboxInput("checkbox_per100kEvolutionCountry100th", label = "Per Population", value = FALSE),
+            checkboxInput("checkbox_logCaseEvolution100th", label = "Y-Axis Logaritmico", value = FALSE),
+            checkboxInput("checkbox_per100kEvolutionCountry100th", label = "Por población", value = FALSE),
             width = 3,
             style = "float: right; padding: 10px; margin-right: 50px"
           )
