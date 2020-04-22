@@ -28,7 +28,7 @@ If you want to add a visualization or any further information, feel free to crea
 ## Developers
 - Mariano Crosetti | Computer Sciences student @ [Facebook](https://www.facebook.com/mariano.crosetti.3) | [LinkedIn](https://www.linkedin.com/in/mariano-crosetti-0b71a4146/) | [Twitter](https://twitter.com/MarianoCrosetti) | [Github](https://github.com/mariano22/) 
 - Christoph Schoenenberger (original repo) | Data Scientist @ [Zuehlke Engineering](https://www.zuehlke.com/ch/en/) Engineering | [LinkedIn](https://www.linkedin.com/in/cschonenberger/) | [Twitter](https://twitter.com/ChSchonenberger) | [Github]("https://github.com/chschoenenberger/)
-- Dario Ceballos | Data analyst [Hybrintech](https://www.hybrin.tech) | Tech Research [CELAG](https://www.celag.org) | @ [Facebook](https://www.facebook.com/disenodc) | [Linkedin](https://www.linkedin.com/in/dario-ceballos-875b1b49) | [Github](https://github.com/disenodc/)
+- Dario Ceballos | Data analyst [Hybrintech](http://www.hybrin.tech) | Tech Research [CELAG](http://www.celag.org) | @ [Facebook](https://www.facebook.com/disenodc) | [Linkedin](https://www.linkedin.com/in/dario-ceballos-875b1b49) | [Github](https://github.com/disenodc/)
 
 ## License
 MIT © Christoph Schönenberger (original version) | 
