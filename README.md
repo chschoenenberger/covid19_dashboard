@@ -33,4 +33,4 @@ If you want to add a visualization or any further information, feel free to crea
 ## License
 MIT © Christoph Schönenberger (original version) | 
 MIT © Mariano Crosetti (adaptation to Argentina) | 
-MIT © Dario Ceballos (UI spanish version)
+Dario Ceballos (UI spanish version)
