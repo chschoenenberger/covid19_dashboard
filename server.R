@@ -4,7 +4,7 @@ server <- function(input, output) {
   # Trigger once an hour
   dataLoadingTrigger <- reactiveTimer(3600000)
 
-  observeEvent(dataLoadingTrigger, {
+  observeEvent(dataLoadingTrigger(), {
     updateData()
   })
 
