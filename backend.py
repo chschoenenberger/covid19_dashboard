@@ -3,6 +3,7 @@ import numpy as np
 import time
 import os
 import datetime
+import math
 
 def normalize_str(s):
     """ Function for name normalization (handle áéíóú). """
@@ -59,10 +60,35 @@ def _load_data_time_series():
     df = pd.concat([df_arg,df_safe])
     # Non described dates are 0's
     df = df.fillna(0).sort_index()
+    # Set day 0 (prior any date) with all 0's
+    day_zero = df.columns[0]-pd.Timedelta(days=1)
+    df[day_zero]=0
+    df = df[df.columns.sort_values()]
 
-    df_diff = df.apply(lambda r : pd.concat([pd.Series([0]), r]).diff().drop(0),axis=1)
+    # Calculate number afected subregions
+    are_confirmados = df.loc['CONFIRMADOS']>0
+    are_confirmados['PARENT_LOCATION'] = are_confirmados.index.map(lambda l : os.path.dirname(l))
+    affected_subregions = are_confirmados.groupby('PARENT_LOCATION').sum()
+    affected_subregions = affected_subregions.reset_index().rename(columns={'PARENT_LOCATION':'LOCATION'})
+    affected_subregions = affected_subregions[ affected_subregions['LOCATION']!='' ]
+    affected_subregions['TYPE']='AFFECTED_SUBREGIONS'
+    affected_subregions = affected_subregions.set_index(['TYPE','LOCATION'])
+
+    df = pd.concat([df,affected_subregions]).sort_index()
+
+    # Calculate difference and differnce ratio with last day
+    df_shift = df.shift(axis=1).fillna(0)
+    df_diff = df-df_shift
     df_diff.index = df_diff.index.map(lambda x : (x[0]+'_DIFF',x[1]) )
-    df = pd.concat([df,df_diff]).sort_index()
+    df_diff_ration = ((df-df_shift)/df_shift).fillna(0)
+    df_diff_ration.index = df_diff_ration.index.map(lambda x : (x[0]+'_DIFF_RATIO',x[1]) )
+
+    df = pd.concat([df,df_diff,df_diff_ration,affected_subregions]).sort_index()
+    return df
+
+def _time_series_melt(df_time_series):
+    df = pd.melt(df_time_series, id_vars=['TYPE','LOCATION'], value_vars=df_time_series.columns[2:], var_name='date')
+    df = df.pivot_table(index=['LOCATION','date'], columns='TYPE', values='value').reset_index()
     return df
 
 def _only_povs(df):
@@ -106,6 +132,7 @@ def _calculate_global_status():
         'timestamp': datetime.datetime.today().strftime('%Y-%m-%d-%H:%M:%S'),
         'geoinfo': df_geoinfo,
         'time_series': df_time_series,
+        'time_series_melt': _time_series_melt(df_time_series),
         'soon_deprecated': _soon_deprecated_data(df_time_series, df_geoinfo)
     }
 
@@ -123,3 +150,8 @@ def backend_global_status_getter(field):
 def backend_data_at_date(date):
     global _global_status
     return _global_status['time_series'][date].swaplevel(0,1).unstack()
+
+def backend_filter_location_by_level(df, level):
+    df = df[ df['LOCATION'].apply(lambda l : l.count('/')) == level ]
+    df['LOCATION'] = df['LOCATION'].apply(lambda l : os.path.basename(l))
+    return df

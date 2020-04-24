@@ -12,23 +12,6 @@ library(reticulate)
 source_python("backend.py")
 source("utils.R", local = T)
 
-DATA_ZIP_PATH <- "data/argcovidapi.zip"
-
-downloadGithubData <- function() {
-  download.file(
-    url      = "https://github.com/mariano22/argcovidapi/archive/master.zip",
-    destfile = DATA_ZIP_PATH
-  )
-
-  unzip(
-    zipfile   = DATA_ZIP_PATH,
-    files     = c("argcovidapi-master/csvs/Argentina_Provinces.csv"),
-    exdir     = "data",
-    junkpaths = T
-  )
-}
-
-
 updateData <- function() {
     # Call backend update function
     backend_update_data()
@@ -38,9 +21,16 @@ updateData <- function() {
 backend_update_data()
 # Get last update data day and time
 changed_date <- backend_global_status_getter('timestamp')
+global_changed_date <- backend_global_status_getter('timestamp')
+# Get time series from backend
+global_time_series <- backend_global_status_getter('time_series') %>%
+                      mutate(date = as.Date(date))
+# Get time series melted from backend
+global_time_series_melt <- backend_global_status_getter('time_series_melt') %>%
+                           mutate(date = as.Date(date))
 # Get data from backend
 data_evolution <- backend_global_status_getter('soon_deprecated') %>%
-                  mutate(date = as.Date(date)) 
+                  mutate(date = as.Date(date))
 # Get latest day
 current_date <- as.Date(max(data_evolution$date), format = "%d/%m/%y")
 
