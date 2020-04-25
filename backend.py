@@ -54,7 +54,7 @@ def _load_SantaFe_data(csv_fp):
     df_safe = df_safe.rename(columns=lambda colname: pd.to_datetime(colname,format='%d/%m/%Y'))
     return df_safe
 
-def _load_data_time_series():
+def _load_data_time_series(df_geoinfo):
     df_arg = _load_National_data(os.path.join(DATA_DIR, 'Argentina_Provinces.csv'))
     df_safe = _load_SantaFe_data(os.path.join(DATA_DIR, 'SantaFe_AllData.csv'))
     df = pd.concat([df_arg,df_safe])
@@ -65,6 +65,14 @@ def _load_data_time_series():
     df[day_zero]=0
     df = df[df.columns.sort_values()]
 
+    # Add per capita fields
+    df_per_capita = pd.merge((df*10000).reset_index(),df_geoinfo[['LOCATION','POPULATION']],on='LOCATION',how='left')
+    df_per_capita = df_per_capita.fillna(math.inf).set_index(['TYPE','LOCATION'])
+    df_per_capita = df_per_capita.div(df_per_capita['POPULATION'], axis=0)
+    df_per_capita = df_per_capita.drop(columns=['POPULATION'])
+    df_per_capita.index = df_per_capita.index.map(lambda x : (x[0]+'_PER100K',x[1]) )
+    df = pd.concat([df,df_per_capita]).sort_index()
+
     # Calculate number afected subregions
     are_confirmados = df.loc['CONFIRMADOS']>0
     are_confirmados['PARENT_LOCATION'] = are_confirmados.index.map(lambda l : os.path.dirname(l))
@@ -73,7 +81,6 @@ def _load_data_time_series():
     affected_subregions = affected_subregions[ affected_subregions['LOCATION']!='' ]
     affected_subregions['TYPE']='AFFECTED_SUBREGIONS'
     affected_subregions = affected_subregions.set_index(['TYPE','LOCATION'])
-
     df = pd.concat([df,affected_subregions]).sort_index()
 
     # Calculate difference and differnce ratio with last day
@@ -83,12 +90,21 @@ def _load_data_time_series():
     df_diff_ration = ((df-df_shift)/df_shift).fillna(0)
     df_diff_ration.index = df_diff_ration.index.map(lambda x : (x[0]+'_DIFF_RATIO',x[1]) )
 
-    df = pd.concat([df,df_diff,df_diff_ration,affected_subregions]).sort_index()
+    df = pd.concat([df,df_diff,df_diff_ration,affected_subregions])
+
+    # Erase non sense columns
+    nonsense_columns = [ 'ACTIVOS_PER100K_DIFF_RATIO',
+                         'AFFECTED_SUBREGIONS_DIFF_RATIO',
+                         'CONFIRMADOS_PER100K_DIFF_RATIO',
+                         'MUERTOS_PER100K_DIFF_RATIO',
+                         'RECUPERADOS_PER100K_DIFF_RATIO' ]
+    df = df[df.index.map(lambda i : i[0] not in nonsense_columns)]
     return df
 
-def _time_series_melt(df_time_series):
+def _time_series_melt(df_time_series, df_geoinfo):
     df = pd.melt(df_time_series, id_vars=['TYPE','LOCATION'], value_vars=df_time_series.columns[2:], var_name='date')
     df = df.pivot_table(index=['LOCATION','date'], columns='TYPE', values='value').reset_index()
+    df = pd.merge(df,df_geoinfo,on='LOCATION',how='left')
     return df
 
 def _only_povs(df):
@@ -126,13 +142,14 @@ def _soon_deprecated_data(df_time_series, df_info):
     return df
 
 def _calculate_global_status():
-    df_time_series =_load_data_time_series().reset_index()
     df_geoinfo =  pd.read_csv(os.path.join(DATA_DIR, 'info_arg.csv'))
+    df_time_series =_load_data_time_series(df_geoinfo).reset_index()
+    df_time_series_melt = _time_series_melt(df_time_series,df_geoinfo)
     return {
         'timestamp': datetime.datetime.today().strftime('%Y-%m-%d-%H:%M:%S'),
         'geoinfo': df_geoinfo,
         'time_series': df_time_series,
-        'time_series_melt': _time_series_melt(df_time_series),
+        'time_series_melt': df_time_series_melt,
         'soon_deprecated': _soon_deprecated_data(df_time_series, df_geoinfo)
     }
 
@@ -152,6 +169,16 @@ def backend_data_at_date(date):
     return _global_status['time_series'][date].swaplevel(0,1).unstack()
 
 def backend_filter_location_by_level(df, level):
-    df = df[ df['LOCATION'].apply(lambda l : l.count('/')) == level ]
+    if level=='LEAF':
+        have_childs = set(df['LOCATION'].apply(lambda l : os.path.dirname(l)))
+        df = df[ df['LOCATION'].apply(lambda l : l not in have_childs) ]
+    else:
+        to_level_map = { 'COUNTRY': 0,
+                         'PROVINCE': 1,
+                         'DEPARTMENT': 2,
+                         'CITY': 3 }
+        if type(level)==str:
+            level = to_level_map[level]
+        df = df[ df['LOCATION'].apply(lambda l : l.count('/')) == level ]
     df['LOCATION'] = df['LOCATION'].apply(lambda l : os.path.basename(l))
     return df

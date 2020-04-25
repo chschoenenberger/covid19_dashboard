@@ -2,12 +2,12 @@ library("htmltools")
 
 addLabel <- function(data) {
   data$label <- paste0(
-    '<b>', ifelse(is.na(data$`Province/State`), data$`Country/Region`, data$`Province/State`), '</b><br>
+    '<b>', data$LOCATION, '</b><br>
     <table style="width:120px;">
-    <tr><td>Confirmed:</td><td align="right">', data$confirmed, '</td></tr>
-    <tr><td>Deceased:</td><td align="right">', data$deceased, '</td></tr>
-    <tr><td>Recoveries:</td><td align="right">', data$recovered, '</td></tr>
-    <tr><td>Active:</td><td align="right">', data$active, '</td></tr>
+    <tr><td>Confirmed:</td><td align="right">', data$CONFIRMADOS, '</td></tr>
+    <tr><td>Deceased:</td><td align="right">', data$MUERTOS, '</td></tr>
+    <tr><td>Recoveries:</td><td align="right">', data$RECUPERADOS, '</td></tr>
+    <tr><td>Active:</td><td align="right">', data$ACTIVOS, '</td></tr>
     </table>'
   )
   data$label <- lapply(data$label, HTML)
@@ -15,7 +15,14 @@ addLabel <- function(data) {
   return(data)
 }
 
-map <- leaflet(addLabel(data_latest)) %>%
+map_data_at_date <- function(date_argument) {
+    global_time_series_melt %>%
+    filter(date == date_argument & CONFIRMADOS>0) %>%
+    backend_filter_location_by_level(1) %>%
+    addLabel()
+}
+
+map <- leaflet() %>%
   setMaxBounds(-180, -90, 180, 90) %>%
   setView( -65.061253, -37.474996, zoom = 3) %>%
   addTiles() %>%
@@ -40,79 +47,75 @@ map <- leaflet(addLabel(data_latest)) %>%
 observe({
   req(input$timeSlider, input$overview_map_zoom)
   zoomLevel               <- input$overview_map_zoom
-  data                    <- data_atDate(input$timeSlider) %>% addLabel()
-  data$confirmedPerCapita <- data$confirmed / data$population * 100000
-  data$activePerCapita    <- data$active / data$population * 100000
+  data                    <- map_data_at_date(input$timeSlider)
   k <- 50
-  leafletProxy("overview_map", data = data) %>%
+  leafletProxy("overview_map") %>%
     clearMarkers() %>%
     addCircleMarkers(
-      lng          = ~Long,
-      lat          = ~Lat,
-      radius       = ~log(confirmed^(zoomLevel / 2)+k),
+      lng          = data$LONG,
+      lat          = data$LAT,
+      radius       = log(data$CONFIRMADOS^(zoomLevel / 2)+k),
       stroke       = FALSE,
       fillOpacity  = 0.5,
-      label        = ~label,
+      label        = data$label,
       labelOptions = labelOptions(textsize = 15),
       group        = "Confirmed"
     ) %>%
     addCircleMarkers(
-      lng          = ~Long,
-      lat          = ~Lat,
-      radius       = ~log(confirmedPerCapita^(zoomLevel)+k),
+      lng          = data$LONG,
+      lat          = data$LAT,
+      radius       = log(data$CONFIRMADOS_PER100K^(zoomLevel)+k),
       stroke       = FALSE,
       color        = "#00b3ff",
       fillOpacity  = 0.5,
-      label        = ~label,
+      label        = data$label,
       labelOptions = labelOptions(textsize = 15),
       group        = "Confirmed (per capita)"
     ) %>%
     addCircleMarkers(
-      lng          = ~Long,
-      lat          = ~Lat,
-      radius       = ~log(recovered^(zoomLevel)+k),
+      lng          = data$LONG,
+      lat          = data$LAT,
+      radius       = log(data$RECUPERADOS^(zoomLevel)+k),
       stroke       = FALSE,
       color        = "#005900",
       fillOpacity  = 0.5,
-      label        = ~label,
+      label        = data$label,
       labelOptions = labelOptions(textsize = 15),
       group = "Recoveries"
     ) %>%
     addCircleMarkers(
-      lng          = ~Long,
-      lat          = ~Lat,
-      radius       = ~log(deceased^(zoomLevel)+k),
+      lng          = data$LONG,
+      lat          = data$LAT,
+      radius       = log(data$MUERTOS^(zoomLevel)+k),
       stroke       = FALSE,
       color        = "#E7590B",
       fillOpacity  = 0.5,
-      label        = ~label,
+      label        = data$label,
       labelOptions = labelOptions(textsize = 15),
       group        = "Deceased"
     ) %>%
     addCircleMarkers(
-      lng          = ~Long,
-      lat          = ~Lat,
-      radius       = ~log(active^(zoomLevel / 2)+k),
+      lng          = data$LONG,
+      lat          = data$LAT,
+      radius       = log(data$ACTIVOS^(zoomLevel / 2)+k),
       stroke       = FALSE,
       color        = "#f49e19",
       fillOpacity  = 0.5,
-      label        = ~label,
+      label        = data$label,
       labelOptions = labelOptions(textsize = 15),
       group        = "Active"
     ) %>%
     addCircleMarkers(
-      lng          = ~Long,
-      lat          = ~Lat,
-      radius       = ~log(activePerCapita^(zoomLevel)+k),
+      lng          = data$LONG,
+      lat          = data$LAT,
+      radius       = log(data$ACTIVOS_PER100K^(zoomLevel)+k),
       stroke       = FALSE,
       color        = "#f4d519",
       fillOpacity  = 0.5,
-      label        = ~label,
+      label        = data$label,
       labelOptions = labelOptions(textsize = 15),
       group        = "Active (per capita)"
     )
 })
 
 output$overview_map <- renderLeaflet(map)
-
-
