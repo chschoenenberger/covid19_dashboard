@@ -25,6 +25,8 @@ global_changed_date <- backend_global_status_getter('timestamp')
 # Get time series from backend
 global_time_series <- backend_global_status_getter('time_series') %>%
                       mutate(date = as.Date(date))
+# Get information for each location from backend
+global_geoinfo <- backend_global_status_getter('geoinfo')
 # Get time series melted from backend
 global_time_series_melt <- backend_global_status_getter('time_series_melt') %>%
                            mutate(date = as.Date(date))

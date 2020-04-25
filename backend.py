@@ -34,6 +34,7 @@ def _load_National_data(csv_fp):
     total_arg = total_arg.reset_index().set_index(['TYPE','LOCATION'])
 
     df_arg = pd.concat([df_arg,total_arg]).sort_index()
+    df_arg = df_arg[df_arg.columns[:-1]]
     return df_arg
 
 def _set_location_safe(row):

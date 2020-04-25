@@ -2,7 +2,7 @@ output$summaryTables <- renderUI({
   tabBox(
     tabPanel("Provincias",
       div(
-        dataTableOutput("summaryDT_country"),
+        dataTableOutput("provinces_DT"),
         style = "margin-top: 10px")
     ),
     #tabPanel("NONE",
@@ -15,72 +15,52 @@ output$summaryTables <- renderUI({
   )
 })
 
-output$summaryDT_country <- renderDataTable(getSummaryDT(data_atDate(current_date), "Country/Region", selectable = TRUE))
-proxy_summaryDT_country  <- dataTableProxy("summaryDT_country")
-output$summaryDT_state   <- renderDataTable(getSummaryDT(data_atDate(current_date), "Province/State", selectable = TRUE))
-proxy_summaryDT_state    <- dataTableProxy("summaryDT_state")
+provinces_data_at_date <- function(date_argument) {
+    global_time_series_melt %>%
+    filter(date == date_argument & CONFIRMADOS>0) %>%
+    backend_filter_location_by_level(1) %>%
+    rename("Provincias" = "LOCATION",
+           "Confirmados" = "CONFIRMADOS",
+           "Confirmados x 100K hab." = "CONFIRMADOS_PER100K",
+           "Recuperados" = "RECUPERADOS",
+           "Fallecidos" = "MUERTOS",
+           "Fallecidos x 100K hab." = "MUERTOS_PER100K",
+           "Activos" = "ACTIVOS") %>%
+    .[,c("Provincias","Confirmados", "Confirmados x 100K hab.", "Recuperados", "Fallecidos", "Fallecidos x 100K hab.", "Activos")]
+}
+
+to_DataTable <- function(df) {
+    datatable(
+      df,
+      rownames  = FALSE,
+      options   = list(
+        order          = list(1, "desc"),
+        scrollX        = TRUE,
+        scrollY        = "37vh",
+        scrollCollapse = T,
+        dom            = 'ft',
+        paging         = FALSE
+      ),
+      selection = "single"
+    )
+}
+
+output$provinces_DT <- renderDataTable(to_DataTable(provinces_data_at_date(current_date)))
+
+proxy_provinces_DT  <- dataTableProxy("provinces_DT")
+
+provinces_DT_data <- reactive({provinces_data_at_date(input$timeSlider)})
 
 observeEvent(input$timeSlider, {
-  data <- data_atDate(input$timeSlider)
-  replaceData(proxy_summaryDT_country, summariseData(data, "Country/Region"), rownames = FALSE)
-  replaceData(proxy_summaryDT_state, summariseData(data, "Province/State"), rownames = FALSE)
+  replaceData(proxy_provinces_DT, provinces_DT_data(), rownames = FALSE)
 }, ignoreInit = TRUE, ignoreNULL = TRUE)
 
-observeEvent(input$summaryDT_country_row_last_clicked, {
-  selectedRow     <- input$summaryDT_country_row_last_clicked
-  selectedCountry <- summariseData(data_atDate(input$timeSlider), "Country/Region")[selectedRow, "Country/Region"]
-  location        <- data_evolution %>%
-    distinct(`Country/Region`, Lat, Long) %>%
-    filter(`Country/Region` == selectedCountry) %>%
-    summarise(
-      Lat  = mean(Lat),
-      Long = mean(Long)
-    )
+observeEvent(input$provinces_DT_rows_selected, {
+  selected_province <- provinces_DT_data()[input$provinces_DT_rows_selected,"Provincias"]
+  location <- global_geoinfo %>%
+              backend_filter_location_by_level(1) %>%
+              filter(LOCATION == selected_province) %>%
+              .[,c("LAT","LONG")]
   leafletProxy("overview_map") %>%
-    setView(lng = location$Long, lat = location$Lat, zoom = 4)
+    setView(lng = location$LONG, lat = location$LAT, zoom = 4)
 })
-
-observeEvent(input$summaryDT_state_row_last_clicked, {
-  selectedRow     <- input$summaryDT_state_row_last_clicked
-  selectedCountry <- summariseData(data_atDate(input$timeSlider), "Province/State")[selectedRow, "Province/State"]
-  location <- data_evolution %>%
-    distinct(`Province/State`, Lat, Long) %>%
-    filter(`Province/State` == selectedCountry) %>%
-    summarise(
-      Lat  = mean(Lat),
-      Long = mean(Long)
-    )
-  leafletProxy("overview_map") %>%
-    setView(lng = location$Long, lat = location$Lat, zoom = 4)
-})
-
-summariseData <- function(df, groupBy) {
-  x<- df %>%
-    group_by(!!sym(groupBy)) %>%
-    summarise(
-      "Confirmados"            = sum(confirmed, na.rm = T),
-      "Recuperados" = sum(recovered, na.rm = T),
-      "Fallecidos"             = sum(deceased, na.rm = T),
-      "Activos"               = sum(active, na.rm = T)
-    );
-  if("Country/Region" %in% colnames(x)) {
-    x <- rename(x, "Provincias" = "Country/Region");
-  }
-  x %>% as.data.frame()
-}
-
-getSummaryDT <- function(data, groupBy, selectable = FALSE) {
-  datatable(
-    na.omit(summariseData(data, groupBy)),
-    rownames  = FALSE,
-    options   = list(
-      order          = list(1, "desc"),
-      scrollX        = TRUE,
-      scrollY        = "37vh",
-      scrollCollapse = T,
-      dom            = 'ft',
-      paging         = FALSE
-    ),
-    selection = ifelse(selectable, "single", "none")
-  )
-}
